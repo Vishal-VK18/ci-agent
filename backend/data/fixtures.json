@@ -1,23 +1,51 @@
 [
   {
-    "competitor_name": "Horizon AI",
-    "signal_type": "feature",
-    "summary": "Horizon AI launched a new 'Workflow Automator' using agentic patterns.",
-    "event_date": "2026-04-01",
-    "entities": ["Horizon AI", "Workflow Automator"]
+    "competitor_name": "Tesla",
+    "signal_type": "Pricing Shift",
+    "summary": "Tesla reduced Model Y price by 8% in China and Germany to aggressively defend market share against BYD and local luxury ICE competitors.",
+    "event_date": "2025-03-01",
+    "entities": ["Tesla", "Model Y", "BYD"]
   },
   {
-    "competitor_name": "Meridian AI",
-    "signal_type": "pricing",
-    "summary": "Meridian AI moved to a usage-based pricing model starting at $0.05 per token.",
-    "event_date": "2026-03-15",
-    "entities": ["Meridian AI", "Usage-based pricing"]
+    "competitor_name": "OpenAI",
+    "signal_type": "Product Update",
+    "summary": "OpenAI unveiled 'GPT-5 Business Prime', a dedicated enterprise-grade agentic architecture with zero-data retention policies for Fortune 100 firms.",
+    "event_date": "2025-02-15",
+    "entities": ["OpenAI", "GPT-5", "Enterprise"]
   },
   {
-    "competitor_name": "Zenith AI",
-    "signal_type": "hiring",
-    "summary": "Zenith AI hired the former Head of Product from Acme Corp to lead their LLM division.",
-    "event_date": "2026-04-05",
-    "entities": ["Zenith AI", "Acme Corp"]
+    "competitor_name": "Google",
+    "signal_type": "Market Expansion",
+    "summary": "Google Cloud division announced a 25% increase in compute infrastructure spending focused specifically on custom TPU v6 clusters in EMEA region.",
+    "event_date": "2025-03-05",
+    "entities": ["Google", "Cloud", "TPU"]
+  },
+  {
+    "competitor_name": "Amazon",
+    "signal_type": "Market Expansion",
+    "summary": "Amazon Logistics is piloting 'DroneLink Express' in three major Indian metros, aiming for 15-minute delivery on high-margin pharmaceuticals.",
+    "event_date": "2025-03-10",
+    "entities": ["Amazon", "Logistics", "DroneLink"]
+  },
+  {
+    "competitor_name": "Microsoft",
+    "signal_type": "Product Update",
+    "summary": "Microsoft reported deep integration of Copilot AI across its ERP/CRM stack, resulting in a 14% uplift in enterprise per-seat license revenue.",
+    "event_date": "2025-02-28",
+    "entities": ["Microsoft", "Copilot", "Azure"]
+  },
+  {
+    "competitor_name": "NVIDIA",
+    "signal_type": "Strategic Investment",
+    "summary": "NVIDIA acquired a 15% stake in a specialized European photonics startup to accelerate chip-to-chip interconnect bandwidth.",
+    "event_date": "2025-03-12",
+    "entities": ["NVIDIA", "Photonics"]
+  },
+  {
+    "competitor_name": "Apple",
+    "signal_type": "Strategic Hire",
+    "summary": "Apple reportedly hired two top chip designers from ARM to lead development of its next-generation Silicon for AI data centers.",
+    "event_date": "2025-03-08",
+    "entities": ["Apple", "ARM", "Silicon"]
   }
 ]

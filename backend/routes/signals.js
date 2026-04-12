@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
 
     return res.status(200).json({
       count: formatted.length,
-      results: formatted
+      signals: formatted
     });
   } catch (err) {
     console.error("[Signals] Detail fetch failed:", err.message);

@@ -1,0 +1,12 @@
+{
+  "name": "ci-agent-root",
+  "version": "1.0.0",
+  "description": "Competitive Intelligence Agent - Root Orchestrator",
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev",
+    "install-all": "npm --prefix backend install"
+  },
+  "author": "",
+  "license": "ISC"
+}
