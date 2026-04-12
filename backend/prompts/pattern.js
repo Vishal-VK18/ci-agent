@@ -27,11 +27,12 @@ EVIDENCE: [list the specific signals that support this pattern]
 PREDICTION: [what this pattern suggests will happen next]
 
 Rules:
-- Identify ALL distinct patterns present in the signals.
+- Identify ALL distinct patterns or strategic clusters present in the signals.
 - Each pattern block must follow the exact format above.
-- Use only the provided signals — do not fabricate evidence.
+- Use only the provided signals for specific evidence.
 - Be analytical, precise, and actionable.
-- If no clear patterns are found, say: "No significant patterns detected in the available signals."`;
+- If no clear granular patterns are found, identify broader strategic movements at the competitor or market level.
+- Never say "No significant patterns detected"; instead, provide a professional categorical overview.`;
 
 /**
  * Build the pattern analysis prompt from recalled signals.
