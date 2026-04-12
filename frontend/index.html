@@ -94,7 +94,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
 </div>
 <div>
-<div class="text-2xl font-bold tracking-tighter text-white">Comp Intel</div>
+<div class="text-2xl font-bold tracking-tighter text-white">COMPETITIVE INTELLIGENCE</div>
 <div class="font-manrope tracking-tight text-xs font-medium text-slate-400">Intelligence Agent</div>
 </div>
 </div>
@@ -139,7 +139,7 @@
 <div class="flex items-center flex-1 max-w-xl">
 <div class="relative w-full group">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-<input class="w-full bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search competitive intelligence..." type="text"/>
+<input id="headerSearchInput" class="w-full bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search competitive intelligence..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-4">
@@ -177,55 +177,8 @@
 </div>
 <!-- Top Row: 4 KPI Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<!-- Total Signals -->
-<div class="bg-surface-variant rounded-xl p-6 shadow-sm border border-transparent flex flex-col gap-4 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
-<div class="flex items-center justify-between">
-<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">sensors</span>
-<span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded-full">+12.5%</span>
-</div>
 <div>
-<h3 class="text-on-surface-variant text-sm font-semibold uppercase tracking-wider">Total Signals</h3>
-<p class="text-3xl font-extrabold text-primary">2,840</p>
-</div>
-</div>
-<!-- Active Competitors -->
-<div class="bg-surface-variant rounded-xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
-<div class="flex items-center justify-between">
-<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">groups</span>
-<span class="text-on-surface-variant text-xs font-bold">Stable</span>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-semibold uppercase tracking-wider">Active Competitors</h3>
-<p class="text-3xl font-extrabold text-primary">14</p>
-</div>
-</div>
-<!-- Patterns Detected -->
-<div class="bg-surface-variant rounded-xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
-<div class="flex items-center justify-between">
-<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">hub</span>
-<span class="text-amber-600 text-xs font-bold bg-amber-50 px-2 py-1 rounded-full">New Found</span>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-semibold uppercase tracking-wider">Patterns Detected</h3>
-<p class="text-3xl font-extrabold text-primary">82</p>
-</div>
-</div>
-<!-- Prediction Accuracy -->
-<div class="bg-surface-variant rounded-xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
-<div class="flex items-center justify-between">
-<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">target</span>
-<div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-<div class="bg-secondary h-full w-[94%]"></div>
-</div>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-semibold uppercase tracking-wider">Prediction Accuracy</h3>
-<p class="text-3xl font-extrabold text-primary">94.2%</p>
-</div>
+<p id="accuracyCount" class="text-3xl font-extrabold text-primary">- %</p>
 </div>
 </div>
 <!-- Middle Section: Large Chart Area -->
@@ -251,39 +204,12 @@
 </div>
 </div>
 <!-- Simulated Line Chart -->
-<div class="h-80 w-full relative flex items-end justify-between px-2">
-<!-- SVG Chart Overlay for Berry Bloom Lines -->
-<svg class="absolute inset-0 w-full h-full preserve-3d" fill="none" preserveaspectratio="none" viewbox="0 0 1000 320">
-<!-- Primary Line -->
-<path d="M0,280 Q100,260 200,180 T400,200 T600,100 T800,150 T1000,50" fill="none" stroke="#5C6B8A" stroke-linecap="round" stroke-width="4"></path>
-<!-- Secondary Decorative Area -->
-<path d="M0,280 Q100,260 200,180 T400,200 T600,100 T800,150 T1000,50 V320 H0 Z" fill="url(#gradient-berry)" fill-opacity="0.05"></path>
-<defs>
-<lineargradient id="gradient-berry" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0%" stop-color="#5C6B8A"></stop>
-<stop offset="100%" stop-color="#5C6B8A" stop-opacity="0"></stop>
-</lineargradient>
-</defs>
-</svg>
-<!-- Chart Grid Lines -->
-<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-<div class="border-t border-secondary w-full"></div>
-<div class="border-t border-secondary w-full"></div>
-<div class="border-t border-secondary w-full"></div>
-<div class="border-t border-secondary w-full"></div>
-<div class="border-t border-secondary w-full"></div>
+<!-- Activity Chart Logic -->
+<div id="activityChartArea" class="h-80 w-full relative flex items-end justify-between px-2 hidden">
 </div>
-<!-- X-Axis Labels -->
-<div class="flex justify-between w-full mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60 translate-y-6">
-<span>WK 01</span>
-<span>WK 02</span>
-<span>WK 03</span>
-<span>WK 04</span>
-<span>WK 05</span>
-<span>WK 06</span>
-<span>WK 07</span>
-<span>WK 08</span>
-</div>
+<div id="dashboardEmptyState" class="h-80 w-full flex flex-col items-center justify-center gap-4 bg-surface-container/30 rounded-xl border-2 border-dashed border-outline-variant/20">
+    <span class="material-symbols-outlined text-4xl text-slate-300">query_stats</span>
+    <p class="text-sm font-medium text-on-surface-variant">No signals yet. Add data to see insights.</p>
 </div>
 </div>
 <!-- Bottom Section: Recent Signals Table -->
@@ -303,67 +229,8 @@
 <th class="px-6 py-4 text-xs font-extrabold uppercase tracking-widest text-on-surface-variant">Impact</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant/10">
-<!-- Table Row 1 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-primary-container text-[10px] flex items-center justify-center text-white font-bold">AZ</div>
-<span class="font-bold text-primary">Azure Dynamics</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-bold">PR Release</span>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant font-medium">Oct 14, 2023</td>
-<td class="px-6 py-4 text-sm text-on-surface leading-snug max-w-xs truncate">Announced strategic partnership with global logistics provider for automation.</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-1">
-<div class="w-2 h-2 rounded-full bg-error"></div>
-<span class="text-xs font-bold text-error uppercase">High</span>
-</div>
-</td>
-</tr>
-<!-- Table Row 2 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-secondary-container text-[10px] flex items-center justify-center text-on-secondary-container font-bold">VS</div>
-<span class="font-bold text-primary">Velocity Systems</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="bg-primary/5 text-primary px-3 py-1 rounded-full text-xs font-bold">Feature Drop</span>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant font-medium">Oct 12, 2023</td>
-<td class="px-6 py-4 text-sm text-on-surface leading-snug max-w-xs truncate">Deployed version 4.2 with enhanced real-time telemetry.</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-1">
-<div class="w-2 h-2 rounded-full bg-amber-500"></div>
-<span class="text-xs font-bold text-amber-600 uppercase">Medium</span>
-</div>
-</td>
-</tr>
-<!-- Table Row 3 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-[#E2E2E6] text-[10px] flex items-center justify-center text-primary font-bold">NQ</div>
-<span class="font-bold text-primary">NetQuark Labs</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">Hiring</span>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant font-medium">Oct 11, 2023</td>
-<td class="px-6 py-4 text-sm text-on-surface leading-snug max-w-xs truncate">Hiring surge for AI research positions in Berlin and Paris.</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-1">
-<div class="w-2 h-2 rounded-full bg-secondary"></div>
-<span class="text-xs font-bold text-secondary uppercase">Informational</span>
-</div>
-</td>
-</tr>
+<tbody id="dashboardSignalsTableBody" class="divide-y divide-outline-variant/10">
+    <tr><td colspan="5" class="p-8 text-center text-on-surface-variant italic">Initializing intelligence stream...</td></tr>
 </tbody>
 </table>
 </div>
@@ -385,98 +252,13 @@
 <!-- Chat Layout -->
 <div class="flex-1 flex flex-col overflow-hidden">
 <!-- Centered Chat Panel -->
-<div class="flex-1 overflow-y-auto px-6 py-12 scroll-smooth">
-<div class="max-w-4xl mx-auto space-y-10">
-<!-- Date Anchor -->
-<div class="flex justify-center">
-<span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">Today's Analysis</span>
-</div>
-<!-- User Message -->
-<div class="flex justify-end pl-24">
-<div class="bg-secondary text-white p-5 rounded-2xl rounded-tr-sm shadow-lg max-w-xl">
-<p class="text-sm leading-relaxed">Summarize the recent market shift for the Q3 SaaS landscape, specifically regarding decentralized AI infrastructure. What patterns are we seeing in competitor pricing models?</p>
-</div>
-</div>
-<!-- AI Response -->
-<div class="flex justify-start pr-24">
-<div class="bg-surface-variant text-on-surface p-6 rounded-2xl rounded-tl-sm shadow-sm border-l-4 border-primary/10 max-w-2xl space-y-6">
-<!-- Answer Text -->
-<div class="space-y-3">
-<p class="text-sm leading-relaxed">Based on my analysis of Q3 filings and real-time market signals, we are observing a significant pivot toward <strong>asynchronous consumption-based pricing</strong>. Three major competitors have moved away from seat-based licensing in favor of infrastructure credits.</p>
-<!-- Citation Badges -->
-<div class="flex flex-wrap gap-2 pt-2">
-<span class="flex items-center gap-1.5 bg-surface-container-highest px-2.5 py-1 rounded-full text-[10px] font-semibold border border-outline-variant/20">
-<span class="material-symbols-outlined text-[14px]">link</span>
-                                        SEC-FILING-2023
-                                    </span>
-<span class="flex items-center gap-1.5 bg-surface-container-highest px-2.5 py-1 rounded-full text-[10px] font-semibold border border-outline-variant/20">
-<span class="material-symbols-outlined text-[14px]">link</span>
-                                        PR-NEWSWIRE-SEP
-                                    </span>
-</div>
-</div>
-<!-- Pattern Highlight Box -->
-<div class="bg-tertiary text-on-tertiary p-4 rounded-xl space-y-2">
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-secondary-fixed-dim" data-icon="query_stats">query_stats</span>
-<span class="text-xs font-bold tracking-tight">DOMINANT PATTERN: "THE CREDIT LEAP"</span>
-</div>
-<p class="text-xs text-on-tertiary-container leading-relaxed">Companies like Vertex and Nexa have introduced $0 upfront models that monetize on AI token usage, mirroring AWS's early strategy but applied to the application layer. This has led to a 22% increase in initial adoption rates across mid-market segments.</p>
-</div>
-<!-- Prediction Section -->
-<div class="bg-surface-container-lowest border border-outline-variant/30 p-5 rounded-xl shadow-inner space-y-3">
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary" data-icon="online_prediction">online_prediction</span>
-<h4 class="text-xs font-extrabold text-primary">PREDICTIVE FORECAST</h4>
-</div>
-<span class="text-[10px] font-bold text-secondary bg-secondary-container px-2 py-0.5 rounded">87% CONFIDENCE</span>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div class="border-l-2 border-secondary-fixed-dim pl-3">
-<p class="text-[10px] text-on-surface-variant font-bold uppercase">Next 60 Days</p>
-<p class="text-sm font-semibold">Tier 2 Entrants adoption of Tokenized Billing.</p>
-</div>
-<div class="border-l-2 border-secondary-fixed-dim pl-3">
-<p class="text-[10px] text-on-surface-variant font-bold uppercase">Market Impact</p>
-<p class="text-sm font-semibold">Downwards pressure on legacy SaaS contracts.</p>
-</div>
-</div>
-</div>
-<!-- Actions -->
-<div class="flex gap-4 pt-2">
-<button class="flex items-center gap-1.5 text-[11px] font-bold text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-base">content_copy</span>
-                                    COPY
-                                </button>
-<button class="flex items-center gap-1.5 text-[11px] font-bold text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-base">refresh</span>
-                                    REGENERATE
-                                </button>
-<button class="flex items-center gap-1.5 text-[11px] font-bold text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-base">share</span>
-                                    EXPORT TO PDF
-                                </button>
-</div>
-</div>
-</div>
-<!-- User Message (Short Follow-up) -->
-<div class="flex justify-end pl-24">
-<div class="bg-secondary text-white p-4 rounded-2xl rounded-tr-sm shadow-md max-w-xl">
-<p class="text-sm leading-relaxed">Which of these competitors pose the most immediate threat to our current pricing strategy?</p>
-</div>
-</div>
-<!-- AI "Thinking" State -->
-<div class="flex justify-start">
-<div class="bg-surface-variant/50 p-4 rounded-2xl flex items-center gap-4">
-<div class="flex gap-1.5">
-<div class="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce" style="animation-delay: 0ms"></div>
-<div class="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce" style="animation-delay: 150ms"></div>
-<div class="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce" style="animation-delay: 300ms"></div>
-</div>
-<span class="text-[10px] font-bold tracking-widest text-secondary uppercase">Analyzing Signal Clusters...</span>
-</div>
-</div>
+<div class="flex-1 overflow-y-auto px-6 py-12 scroll-smooth" id="chatMessages">
+    <div id="chatThread" class="max-w-4xl mx-auto space-y-10 hidden"></div>
+<div id="chatEmptyState" class="flex flex-col items-center justify-center h-[400px] text-center space-y-4 opacity-40">
+    <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-4xl">chat</span>
+    </div>
+    <p class="text-sm font-bold tracking-widest uppercase">Ask a question to start analysis</p>
 </div>
 </div>
 <!-- Input Section -->
@@ -488,12 +270,12 @@
 <button class="p-3 text-on-surface-variant hover:text-secondary hover:bg-surface-container transition-all rounded-full">
 <span class="material-symbols-outlined">attach_file</span>
 </button>
-<textarea class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface py-3 px-2 resize-none max-h-48 font-body text-sm placeholder:text-slate-400" placeholder="Ask me anything about your competitors..." rows="1"></textarea>
+<textarea id="chatInput" class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface py-3 px-2 resize-none max-h-48 font-body text-sm placeholder:text-slate-400" placeholder="Ask me anything about your competitors..." rows="1"></textarea>
 <div class="flex items-center gap-1 px-1">
 <button class="p-3 text-on-surface-variant hover:text-secondary hover:bg-surface-container transition-all rounded-full">
 <span class="material-symbols-outlined">mic</span>
 </button>
-<button class="bg-primary text-white w-12 h-12 flex items-center justify-center rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg">
+<button id="chatSendBtn" type="button" onclick="sendQuery()" class="bg-primary text-white w-12 h-12 flex items-center justify-center rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
 </button>
 </div>
@@ -513,29 +295,9 @@
 </div>
 </div>
 </main>
-<!-- Contextual "Patterns" Quick-View (Floating Asymmetric Element) -->
-<div class="absolute right-8 top-24 w-48 hidden xl:block space-y-4">
-<div class="bg-surface-container-low p-4 rounded-xl border-l-2 border-secondary shadow-sm">
-<p class="text-[10px] font-bold text-secondary uppercase mb-2">Live Signals</p>
-<div class="space-y-3">
-<div class="flex items-start gap-2">
-<div class="w-1.5 h-1.5 rounded-full bg-green-500 mt-1"></div>
-<p class="text-[11px] leading-snug">Competitor A just updated pricing on 'Enterprise' tier.</p>
-</div>
-<div class="flex items-start gap-2 opacity-60">
-<div class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></div>
-<p class="text-[11px] leading-snug">New whitepaper detected on decentralized nodes.</p>
-</div>
-</div>
-</div>
-<div class="bg-primary-container p-4 rounded-xl text-white">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-secondary-fixed-dim text-sm" data-icon="chat">chat</span>
-<span class="text-[10px] font-bold uppercase">Topic Focus</span>
-</div>
-<p class="text-[11px] font-medium leading-relaxed text-on-primary-container">You are currently analyzing <strong>Pricing Strategy Shift</strong>.</p>
-</div>
-</div>
+            </div>
+        </div>
+    </main>
 </div><div class="page" id="ingestionPage">
 <!-- SideNavBar (Execution from JSON) -->
 <!-- TopNavBar (Execution from JSON) -->
@@ -570,12 +332,12 @@
 </button>
 </div>
 <!-- Form Fields -->
-<form class="space-y-8">
+<form class="space-y-8" onsubmit="return false;">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <!-- Competitor Name -->
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Competitor Name</label>
-<input class="w-full bg-surface-container-low border-none rounded-xl py-3.5 px-4 text-primary font-medium focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 transition-all" placeholder="e.g. Acme Corp" type="text"/>
+<input id="ingestCompetitor" class="w-full bg-surface-container-low border-none rounded-xl py-3.5 px-4 text-primary font-medium focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 transition-all" placeholder="e.g. Acme Corp" type="text"/>
 </div>
 <!-- Signal Type -->
 <div class="space-y-2">
@@ -602,7 +364,7 @@
 <!-- Input Area -->
 <div class="space-y-2 md:col-span-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Signal Description &amp; Intelligence</label>
-<textarea class="w-full bg-surface-container-low border-none rounded-xl py-3.5 px-4 text-primary font-medium focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 transition-all resize-none" placeholder="Synthesize the observed signal and its potential impact..." rows="5"></textarea>
+<textarea id="ingestText" class="w-full bg-surface-container-low border-none rounded-xl py-3.5 px-4 text-primary font-medium focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 transition-all resize-none" placeholder="Synthesize the observed signal and its potential impact..." rows="5"></textarea>
 </div>
 </div>
 <!-- Actions -->
@@ -611,10 +373,11 @@
 <span class="material-symbols-outlined text-sm">lock</span>
 <span class="text-xs font-medium font-label">Encrypted Ingestion</span>
 </div>
-<button class="bg-primary-container text-white px-10 py-4 rounded-xl font-bold tracking-tight shadow-lg shadow-primary/20 hover:translate-y-[-2px] hover:bg-primary transition-all active:scale-95" type="submit">
+<button id="ingestStoreBtn" disabled type="button" onclick="ingestSignal()" class="bg-primary-container text-white px-10 py-4 rounded-xl font-bold tracking-tight shadow-lg shadow-primary/20 hover:translate-y-[-2px] hover:bg-primary transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                             Store Signal
                         </button>
 </div>
+<div id="ingestStatus" class="mt-4 text-sm font-semibold hidden"></div>
 </form>
 </div>
 </div>
@@ -692,227 +455,14 @@
 <th class="px-8 py-5 text-right">Actions</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant/10">
-<!-- Row 1 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-8 py-6">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-white p-1.5 flex items-center justify-center shadow-sm">
-<img alt="Stripe Logo" class="w-full h-full object-contain" data-alt="clean minimalist logo icon on a white background for a modern fintech company" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCES-fC_P24TWVKIu8zSHG30-6WmV3g3lBxpysmn70ynXJmYp7PdKOmtfjowt_Tvz2-fCDY5FikQjtUJg5os8uk0cetYNv-2-ItTHwXm9MFoPsHzqi5IZz-kJzNwj44CPwNa73Usg60_aqNxWo_J8kvUlbCHKdbvKq7BOJ5ba2WJSml2YwzQgsEvEnDUWgIf-YmfAx7Y6OleRO_LanJ2-pSKqEzbFEuiG0ayzOMM6Z1m71nw1WBKMTc5PXnk4zyGXK5CHMaL8pOc4I"/>
-</div>
-<div>
-<div class="font-bold text-on-surface">Synthetix Inc.</div>
-<div class="text-xs text-on-surface-variant">Tier 1 Competitor</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-6">
-<span class="bg-secondary/10 text-secondary px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-tight flex items-center gap-1.5 w-fit">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                    Pricing Shift
-                                </span>
-</td>
-<td class="px-6 py-6">
-<div class="text-sm font-medium text-on-surface">Oct 24, 2023</div>
-<div class="text-[10px] text-on-surface-variant font-bold">14:22 GMT</div>
-</td>
-<td class="px-6 py-6">
-<p class="text-sm text-on-surface leading-relaxed max-w-md">
-                                    Reduced entry-tier API pricing by 15%. Direct counter-move to our recent Enterprise release in the EMEA region.
-                                </p>
-</td>
-<td class="px-8 py-6 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="bookmark">bookmark</span>
-</button>
-</div>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-8 py-6">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-white p-1.5 flex items-center justify-center shadow-sm">
-<img alt="Nebula Systems" class="w-full h-full object-contain" data-alt="modern corporate logo for a technology infrastructure company with blue and white colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqz2PCRxUu6igEU8J1EqJVMkwn-fsPzXfvOv093XOYyImKLkH2kjlnm1ny_vBy7dlJAUla4RD4SOdELU9_8VKPhohPw1AudLrxGW0BUpzY0sHdUiipCW2rY80FtY_irYhIJqoFFY2mGeBRLr91YuG6hUM4JHmz-IeSMU6W50WiJAvuDCcCGY981f0G88b-1_75ChaAJ5SjOdRx56aksVFPrXMLtU2_G3mY0qgJX7VJ69GsGzXNX7Kv-_9rO7p8sfew1Y8ddxgKMGQ"/>
-</div>
-<div>
-<div class="font-bold text-on-surface">Nebula Systems</div>
-<div class="text-xs text-on-surface-variant">Strategic Watch</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-6">
-<span class="bg-primary-container text-on-primary-container px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-tight flex items-center gap-1.5 w-fit">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                    Hiring Surge
-                                </span>
-</td>
-<td class="px-6 py-6">
-<div class="text-sm font-medium text-on-surface">Oct 22, 2023</div>
-<div class="text-[10px] text-on-surface-variant font-bold">09:05 GMT</div>
-</td>
-<td class="px-6 py-6">
-<p class="text-sm text-on-surface leading-relaxed max-w-md">
-                                    Added 12 Senior AI Researchers in London. Likely focusing on proprietary LLM development for edge computing.
-                                </p>
-</td>
-<td class="px-8 py-6 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="bookmark">bookmark</span>
-</button>
-</div>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-8 py-6">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-white p-1.5 flex items-center justify-center shadow-sm">
-<img alt="Vortex Labs" class="w-full h-full object-contain" data-alt="sleek minimalist technology company logo with vibrant primary colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwRFti3q851xrrF40rBTeC_XsCOKFOqxTv0y2eQvx-ymgawn0RRUvDdvemRldhB0rG5PeZPv81RKUpuzHZeVHLMSrsGN9Mv6Bt6JDiI9fUkC3JMhMSQxvEbkzrCx0sykKac7qAYkeBIwRFXCbzSwKL5TtHlkNDpFlIX3zSTWNac6rPWJKPv4NCak9ctupzokP7JUc6iowl7gUc9muFOhgaIbzf7F4dxM_kJmILcLjZqLMk6AbANkKFL--xp4pi7bzCkyjs288g6-4"/>
-</div>
-<div>
-<div class="font-bold text-on-surface">Vortex Labs</div>
-<div class="text-xs text-on-surface-variant">Emerging Threat</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-6">
-<span class="bg-error-container text-on-error-container px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-tight flex items-center gap-1.5 w-fit">
-<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                    Major Leak
-                                </span>
-</td>
-<td class="px-6 py-6">
-<div class="text-sm font-medium text-on-surface">Oct 21, 2023</div>
-<div class="text-[10px] text-on-surface-variant font-bold">23:45 GMT</div>
-</td>
-<td class="px-6 py-6">
-<p class="text-sm text-on-surface leading-relaxed max-w-md">
-                                    Unpublished roadmap documentation leaked via public GitHub repo. Indicates Q4 pivot toward decentralized storage.
-                                </p>
-</td>
-<td class="px-8 py-6 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="bookmark">bookmark</span>
-</button>
-</div>
-</td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-8 py-6">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-white p-1.5 flex items-center justify-center shadow-sm">
-<img alt="Data Apex" class="w-full h-full object-contain" data-alt="geometric abstract logo for a data analytics company with clean lines and professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5OmjyECgmscFoOzt0PrUGVfpfkyJgt4BkbptPctfVLkOmmaAFwJylyWIk4nNnCCTSY3qne28FkSeIEunOv4E1QbTDfV6KUvvPtOSGd6AFuyzAsbQFTLuPzWlnc6oYWNzpcS3Ckp2grN9bq7X8vFLmU8HXw7tT9jH3d0Y5V353wgvpcXAF5j87C4oUF81LabTMneCmkBKexmjFnu0yofoSuAmXiEZl-QngGWi5Qv0P7-mrQzPSqsilVOdSnX5a8gMFfM_K91qxxdo"/>
-</div>
-<div>
-<div class="font-bold text-on-surface">Data Apex</div>
-<div class="text-xs text-on-surface-variant">Market Leader</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-6">
-<span class="bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-tight flex items-center gap-1.5 w-fit">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                    Conference Keynote
-                                </span>
-</td>
-<td class="px-6 py-6">
-<div class="text-sm font-medium text-on-surface">Oct 20, 2023</div>
-<div class="text-[10px] text-on-surface-variant font-bold">11:00 GMT</div>
-</td>
-<td class="px-6 py-6">
-<p class="text-sm text-on-surface leading-relaxed max-w-md">
-                                    Announced partnership with Global Telecom. Integrates their core analytics into 5G rollout hardware.
-                                </p>
-</td>
-<td class="px-8 py-6 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary">
-<span class="material-symbols-outlined text-lg" data-icon="bookmark">bookmark</span>
-</button>
-</div>
-</td>
-</tr>
+<tbody id="signalsTableBody" class="divide-y divide-outline-variant/10">
 </tbody>
 </table>
-<!-- Pagination -->
-<div class="p-6 bg-surface-container border-t border-outline-variant/10 flex items-center justify-between">
-<div class="text-xs font-semibold text-on-surface-variant">Showing 1 to 4 of 284 signals</div>
-<div class="flex items-center gap-2">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-highest text-slate-400">
-<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
-</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold">1</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-highest text-on-surface-variant text-xs font-bold">2</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-highest text-on-surface-variant text-xs font-bold">3</button>
-<span class="px-2 text-on-surface-variant">...</span>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-highest text-slate-400">
-<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
-</button>
-</div>
-</div>
 </section>
-<!-- Bottom Insight Card -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="col-span-2 bg-primary rounded-xl p-8 text-white relative overflow-hidden">
-<div class="relative z-10 space-y-4">
-<h3 class="text-2xl font-bold tracking-tight">Weekly Signal Momentum</h3>
-<p class="text-on-primary-container max-w-lg">Signals are up 42% compared to last week, primarily driven by the upcoming 'Tech Horizon' expo. Automated alerts are active for all Tier 1 competitors.</p>
-<div class="flex gap-4 pt-4">
-<div class="bg-white/10 backdrop-blur-md p-4 rounded-xl flex-1">
-<div class="text-3xl font-extrabold">12</div>
-<div class="text-[10px] uppercase tracking-widest text-on-primary-container font-bold">Critical Alerts</div>
+<!-- System Context Placeholder -->
+<div class="col-span-3 bg-surface-container-highest rounded-xl p-8 text-center text-on-surface-variant italic">
+    Operational intelligence context is synthesized in real-time. Signals are processed through Hindsight memory bank.
 </div>
-<div class="bg-white/10 backdrop-blur-md p-4 rounded-xl flex-1">
-<div class="text-3xl font-extrabold">84</div>
-<div class="text-[10px] uppercase tracking-widest text-on-primary-container font-bold">Neutral Pings</div>
-</div>
-</div>
-</div>
-<!-- Decorative Element -->
-<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-secondary rounded-full blur-[100px] opacity-20"></div>
-</div>
-<div class="bg-surface-container-highest rounded-xl p-8 space-y-6 flex flex-col justify-between">
-<div>
-<h4 class="font-bold text-lg text-primary">Intelligence Health</h4>
-<div class="mt-4 space-y-4">
-<div class="flex justify-between items-center text-xs">
-<span class="font-bold text-on-surface-variant">Data Accuracy</span>
-<span class="text-secondary font-extrabold">98.4%</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-<div class="bg-secondary h-full w-[98.4%]"></div>
-</div>
-<div class="flex justify-between items-center text-xs">
-<span class="font-bold text-on-surface-variant">Avg. Detection Speed</span>
-<span class="text-secondary font-extrabold">14m</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-<div class="bg-secondary h-full w-[75%]"></div>
-</div>
-</div>
-</div>
-<button class="w-full py-3 bg-surface-container-low border border-outline-variant/20 rounded-xl text-sm font-bold text-secondary hover:bg-surface-container transition-colors">
-                        View Audit Log
-                    </button>
-</div>
-</section>
 </div>
 </main>
 </div><div class="page" id="timelinePage">
@@ -939,103 +489,8 @@
 <div class="relative max-w-5xl mx-auto py-10">
 <!-- The Stem (Timeline Line) -->
 <div class="absolute left-1/2 top-0 bottom-0 w-0.5 timeline-stem -translate-x-1/2 hidden md:block"></div>
-<div class="space-y-24 relative">
-<!-- Timeline Event 1 (Left Card) -->
-<div class="relative flex flex-col md:flex-row items-center justify-between">
-<div class="w-full md:w-[45%] mb-8 md:mb-0">
-<div class="bg-surface-variant p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 relative group border-none">
-<div class="flex justify-between items-start mb-4">
-<span class="bg-primary/10 text-primary text-[10px] font-extrabold tracking-widest px-2 py-1 rounded uppercase">Product Launch</span>
-<span class="text-sm font-bold text-on-surface-variant">Oct 14, 2023</span>
-</div>
-<h3 class="text-xl font-bold text-primary mb-2">CloudScale AI Release</h3>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
-                                NexaCorp launched their proprietary LLM integration for enterprise logistics, targeting a 15% reduction in shipping latency.
-                            </p>
-<div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
-<span class="material-symbols-outlined text-sm" data-icon="corporate_fare">corporate_fare</span>
-</div>
-<span class="text-sm font-bold text-primary">NexaCorp</span>
-</div>
-</div>
-</div>
-<!-- Central Node -->
-<div class="absolute left-1/2 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface shadow-md z-10 hidden md:block"></div>
-<div class="w-full md:w-[45%]"></div>
-</div>
-<!-- Timeline Event 2 (Right Card) -->
-<div class="relative flex flex-col md:flex-row items-center justify-between">
-<div class="w-full md:w-[45%]"></div>
-<!-- Central Node -->
-<div class="absolute left-1/2 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface shadow-md z-10 hidden md:block"></div>
-<div class="w-full md:w-[45%]">
-<div class="bg-surface-variant p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 relative border-none">
-<div class="flex justify-between items-start mb-4">
-<span class="bg-error/10 text-error text-[10px] font-extrabold tracking-widest px-2 py-1 rounded uppercase">Acquisition</span>
-<span class="text-sm font-bold text-on-surface-variant">Sep 28, 2023</span>
-</div>
-<h3 class="text-xl font-bold text-primary mb-2">Strategic Merger: Pivot &amp; Flow</h3>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
-                                FlowState Dynamics acquired Pivot Analytics for $450M, signaling a major move into predictive market modeling.
-                            </p>
-<div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
-<span class="material-symbols-outlined text-sm" data-icon="handshake">handshake</span>
-</div>
-<span class="text-sm font-bold text-primary">FlowState Dynamics</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Timeline Event 3 (Left Card) -->
-<div class="relative flex flex-col md:flex-row items-center justify-between">
-<div class="w-full md:w-[45%] mb-8 md:mb-0">
-<div class="bg-surface-variant p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 relative border-none">
-<div class="flex justify-between items-start mb-4">
-<span class="bg-secondary/10 text-secondary text-[10px] font-extrabold tracking-widest px-2 py-1 rounded uppercase">Market Entry</span>
-<span class="text-sm font-bold text-on-surface-variant">Aug 12, 2023</span>
-</div>
-<h3 class="text-xl font-bold text-primary mb-2">Expansion into APAC</h3>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
-                                Quantum Systems opened a regional headquarters in Singapore, aggressively recruiting top engineering talent from local competitors.
-                            </p>
-<div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
-<span class="material-symbols-outlined text-sm" data-icon="public">public</span>
-</div>
-<span class="text-sm font-bold text-primary">Quantum Systems</span>
-</div>
-</div>
-</div>
-<!-- Central Node -->
-<div class="absolute left-1/2 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface shadow-md z-10 hidden md:block"></div>
-<div class="w-full md:w-[45%]"></div>
-</div>
-<!-- Timeline Event 4 (Right Card) -->
-<div class="relative flex flex-col md:flex-row items-center justify-between">
-<div class="w-full md:w-[45%]"></div>
-<!-- Central Node -->
-<div class="absolute left-1/2 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface shadow-md z-10 hidden md:block"></div>
-<div class="w-full md:w-[45%]">
-<div class="bg-surface-variant p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 relative border-none">
-<div class="flex justify-between items-start mb-4">
-<span class="bg-on-tertiary-container/20 text-tertiary text-[10px] font-extrabold tracking-widest px-2 py-1 rounded uppercase">Regulatory</span>
-<span class="text-sm font-bold text-on-surface-variant">July 05, 2023</span>
-</div>
-<h3 class="text-xl font-bold text-primary mb-2">GDPR Compliance Pivot</h3>
-<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
-                                Following the new EU guidelines, NexaCorp overhauled its data processing engine, causing a temporary slowdown in service deployments.
-                            </p>
-<div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
-<span class="material-symbols-outlined text-sm" data-icon="gavel">gavel</span>
-</div>
-<span class="text-sm font-bold text-primary">NexaCorp</span>
-</div>
-</div>
-</div>
-</div>
+<div id="timelineContainer" class="space-y-24 relative">
+    <div class="p-20 text-center text-slate-400">No timeline data available.</div>
 </div>
 </div>
 <!-- Monthly Summary Glassmorphism Section -->
@@ -1086,183 +541,11 @@
             </p>
 </div>
 <!-- Pattern Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-<!-- Insight Card 1: Highlighted Accent -->
-<div class="bg-[#5C6B8A] rounded-xl p-8 text-white flex flex-col shadow-xl relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-white/10 transition-all"></div>
-<div class="flex justify-between items-start mb-6">
-<div class="bg-white/20 p-3 rounded-xl backdrop-blur-md">
-<span class="material-symbols-outlined text-white" data-icon="trending_down">trending_down</span>
+<div id="patternsGrid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+    <div class="col-span-full p-20 text-center text-slate-400 lowercase italic opacity-60">No patterns detected yet.</div>
 </div>
-<div class="flex flex-col items-end">
-<span class="text-xs font-bold uppercase tracking-widest opacity-70">Confidence</span>
-<span class="text-3xl font-manrope font-black">94%</span>
-</div>
-</div>
-<h3 class="font-manrope text-2xl font-bold mb-3">Price Drop Before Launch</h3>
-<p class="text-white/80 text-sm mb-8 leading-relaxed">
-                    Systemic discounting on flagship models exactly 14 days before a new generation announcement. This pattern suggests inventory clearing for the 'Z-Series'.
-                </p>
-<div class="mt-auto space-y-4">
-<div class="text-xs font-bold uppercase tracking-widest opacity-60">Evidence Timeline</div>
-<ul class="space-y-3">
-<li class="flex items-center gap-3 bg-white/10 p-3 rounded-lg border border-white/5">
-<span class="material-symbols-outlined text-sm opacity-60" data-icon="calendar_today">calendar_today</span>
-<span class="text-xs font-medium">Oct 12, 2023 — SKU-99X Disount</span>
-</li>
-<li class="flex items-center gap-3 bg-white/10 p-3 rounded-lg border border-white/5">
-<span class="material-symbols-outlined text-sm opacity-60" data-icon="calendar_today">calendar_today</span>
-<span class="text-xs font-medium">Aug 04, 2023 — Regional Flash Sale</span>
-</li>
-<li class="flex items-center gap-3 bg-white/10 p-3 rounded-lg border border-white/5">
-<span class="material-symbols-outlined text-sm opacity-60" data-icon="calendar_today">calendar_today</span>
-<span class="text-xs font-medium">Jun 28, 2023 — Trade-in Bonus Peak</span>
-</li>
-</ul>
-</div>
-</div>
-<!-- Insight Card 2 -->
-<div class="bg-surface-container-highest rounded-xl p-8 flex flex-col transition-all hover:translate-y-[-4px]">
-<div class="flex justify-between items-start mb-6">
-<div class="bg-secondary/10 p-3 rounded-xl">
-<span class="material-symbols-outlined text-secondary" data-icon="campaign">campaign</span>
-</div>
-<div class="flex flex-col items-end">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Confidence</span>
-<span class="text-3xl font-manrope font-black text-primary">82%</span>
-</div>
-</div>
-<h3 class="font-manrope text-2xl font-bold text-primary mb-3">Ad-Spend Migration</h3>
-<p class="text-on-surface-variant text-sm mb-8 leading-relaxed">
-                    Shift from performance marketing to high-budget brand awareness in Tier-2 markets. Indicative of a localized market-capture offensive.
-                </p>
-<div class="mt-auto space-y-4">
-<div class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Recent Instances</div>
-<ul class="space-y-3">
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="event">event</span>
-<span class="text-xs font-medium text-on-surface">Nov 02 — DACH Region Surge</span>
-</li>
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="event">event</span>
-<span class="text-xs font-medium text-on-surface">Oct 21 — APAC TV Buy Confirmed</span>
-</li>
-</ul>
-</div>
-</div>
-<!-- Insight Card 3 -->
-<div class="bg-surface-container-highest rounded-xl p-8 flex flex-col transition-all hover:translate-y-[-4px]">
-<div class="flex justify-between items-start mb-6">
-<div class="bg-secondary/10 p-3 rounded-xl">
-<span class="material-symbols-outlined text-secondary" data-icon="groups">groups</span>
-</div>
-<div class="flex flex-col items-end">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Confidence</span>
-<span class="text-3xl font-manrope font-black text-primary">68%</span>
-</div>
-</div>
-<h3 class="font-manrope text-2xl font-bold text-primary mb-3">Executive Poaching Loop</h3>
-<p class="text-on-surface-variant text-sm mb-8 leading-relaxed">
-                    Recurrent hiring of R&amp;D leads from specialized semiconductor firms. Pattern suggests internal development of custom silicon architecture.
-                </p>
-<div class="mt-auto space-y-4">
-<div class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Evidence List</div>
-<ul class="space-y-3">
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="person_add">person_add</span>
-<span class="text-xs font-medium text-on-surface">Sept 15 — CTO Hired from rival</span>
-</li>
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="person_add">person_add</span>
-<span class="text-xs font-medium text-on-surface">Aug 12 — 4x Senior Engineers added</span>
-</li>
-</ul>
-</div>
-</div>
-<!-- Bento Layout Extension -->
-<div class="lg:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col md:flex-row gap-8">
-<div class="md:w-1/3">
-<h3 class="font-manrope text-xl font-bold text-primary mb-4">Strategic Landscape</h3>
-<p class="text-sm text-on-surface-variant mb-6">Visual correlation of pattern frequency vs. market impact across the current quarter.</p>
-<div class="space-y-4">
-<div class="flex justify-between text-xs font-bold">
-<span>Signal Noise</span>
-<span class="text-secondary">Low</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-[25%] rounded-full"></div>
-</div>
-<div class="flex justify-between text-xs font-bold pt-2">
-<span>Threat Density</span>
-<span class="text-error">High</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-error w-[85%] rounded-full"></div>
-</div>
-</div>
-</div>
-<div class="md:w-2/3 bg-white rounded-xl overflow-hidden shadow-sm">
-<img alt="Data Analytics Visualization" class="w-full h-full object-cover mix-blend-multiply opacity-80" data-alt="modern data visualization chart showing complex neural network connections with soft blue and deep purple glow on a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANrdLeO0CF9kfXZ_ZL0I5E7RhGs-7lAxMae8dNr-NAbrFy5kNOFdWzBik7ROL7UgJ0UjqRnCNyCzSq_zAoEer2W0a7QDyKQ36JbPi_Rx_ozU6v7Oo9Al_MSqTQBmKfQ7l9V8mqz5Hh7ThQ-UrOjtTPnuB5xFDCwqzuQXAnl_02SKV9yRg1fmSSPsENErAuRuWIAo_Akga-jZifUVn9rtXC9qinCJaJL03T57LJW1LBgpOb3bzfwXVm80a7FNTzsYPMjs28suz_mTs"/>
-</div>
-</div>
-<!-- Insight Card 4 -->
-<div class="bg-surface-container-highest rounded-xl p-8 flex flex-col transition-all hover:translate-y-[-4px]">
-<div class="flex justify-between items-start mb-6">
-<div class="bg-secondary/10 p-3 rounded-xl">
-<span class="material-symbols-outlined text-secondary" data-icon="language">language</span>
-</div>
-<div class="flex flex-col items-end">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Confidence</span>
-<span class="text-3xl font-manrope font-black text-primary">91%</span>
-</div>
-</div>
-<h3 class="font-manrope text-2xl font-bold text-primary mb-3">Domain Squatting Peak</h3>
-<p class="text-on-surface-variant text-sm mb-8 leading-relaxed">
-                    Registration of 12+ domains related to "EcoSphere" and "GreenPayments" in the last 48 hours via stealth registrars.
-                </p>
-<div class="mt-auto space-y-4">
-<div class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Metadata</div>
-<ul class="space-y-3">
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="link">link</span>
-<span class="text-xs font-medium text-on-surface">Nov 14 — ecosphere-pay.io</span>
-</li>
-<li class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="link">link</span>
-<span class="text-xs font-medium text-on-surface">Nov 14 — green-eco-wallet.com</span>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<!-- Footer Stats Overlay -->
-<div class="mt-12 glass-panel rounded-2xl p-6 border border-white/40 shadow-xl flex flex-wrap items-center justify-between gap-8">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full bloom-gradient flex items-center justify-center text-white">
-<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
-</div>
-<div>
-<h4 class="text-sm font-bold text-primary">Real-time Synthesis Active</h4>
-<p class="text-xs text-on-surface-variant">Next analysis refresh in 14:02s</p>
-</div>
-</div>
-<div class="flex gap-12">
-<div>
-<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Total Patterns</span>
-<span class="text-2xl font-manrope font-black text-primary">128</span>
-</div>
-<div>
-<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">High Urgency</span>
-<span class="text-2xl font-manrope font-black text-error">14</span>
-</div>
-<div>
-<span class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">New Today</span>
-<span class="text-2xl font-manrope font-black text-secondary">03</span>
-</div>
-</div>
-<button class="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary-container transition-all shadow-md">
-                Export Executive Summary
-            </button>
+<div class="mt-12 glass-panel rounded-2xl p-8 text-center text-on-surface-variant opacity-60">
+    Pattern cross-reference engine active. Monitoring for recurrence clusters in memory.
 </div>
 </main>
 </div><div class="page" id="predictionsPage">
@@ -1271,201 +554,14 @@
 <!-- Main Content -->
 <main class="mt-16 p-10 max-w-[1600px] pt-16 h-full overflow-y-auto">
 <!-- Page Header -->
-<!-- Prediction Bento Grid -->
-<div class="grid grid-cols-12 gap-6">
-<!-- Major Prediction Card 1 -->
-<div class="col-span-8 bg-surface-container-highest rounded-3xl p-8 custom-shadow relative overflow-hidden group">
-<div class="flex justify-between items-start mb-12">
-<div class="flex items-center gap-4">
-<div class="w-14 h-14 bg-surface-container-lowest rounded-2xl flex items-center justify-center text-primary shadow-sm">
-<span class="material-symbols-outlined text-3xl" data-icon="corporate_fare">corporate_fare</span>
+<div id="predictionsGrid" class="grid grid-cols-12 gap-6">
+    <div class="col-span-12 p-20 text-center text-slate-400">No predictions available. Add more signals to generate forecasts.</div>
 </div>
-<div>
-<span class="text-[10px] uppercase tracking-widest text-secondary font-bold">Competitor Alpha</span>
-<h3 class="text-2xl font-headline font-bold text-primary">European Market Pivot</h3>
+
 </div>
 </div>
-<div class="text-right">
-<div class="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-bold mb-2">
-<div class="w-2 h-2 rounded-full bg-secondary"></div>
-                            CRITICAL PRIORITY
-                        </div>
-<p class="text-xs text-on-surface-variant">Estimated: Q3 2024</p>
-</div>
-</div>
-<div class="mb-10">
-<p class="text-primary/70 text-sm font-bold uppercase tracking-widest mb-3">Predicted Action</p>
-<p class="text-2xl text-primary leading-tight font-medium">Acquisition of local mid-tier logistics providers to bypass port congestion challenges and own the last-mile delivery chain.</p>
-</div>
-<div class="grid grid-cols-2 gap-12 mb-10">
-<div>
-<div class="flex justify-between items-center mb-4">
-<span class="text-sm font-bold text-primary">Confidence Level</span>
-<span class="text-sm font-extrabold text-secondary">92%</span>
-</div>
-<div class="h-3 w-full bg-surface-container-low rounded-full overflow-hidden p-0.5">
-<div class="h-full bloom-gradient rounded-full" style="width: 92%"></div>
-</div>
-</div>
-<div>
-<span class="text-sm font-bold text-primary block mb-4">Supporting Signals</span>
-<div class="flex gap-2">
-<span class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center text-secondary shadow-sm" title="Patent Filing">
-<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
-</span>
-<span class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center text-secondary shadow-sm" title="Hiring Surge">
-<span class="material-symbols-outlined text-sm" data-icon="group_add">group_add</span>
-</span>
-<span class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center text-secondary shadow-sm" title="Supply Chain Data">
-<span class="material-symbols-outlined text-sm" data-icon="forklift">forklift</span>
-</span>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-6 pt-6 border-t border-outline-variant/10">
-<div class="flex -space-x-2">
-<img alt="Analyst" class="w-8 h-8 rounded-full border-2 border-surface-container-highest" data-alt="portrait of a professional analyst in a casual office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoOmueiYB3dzw8SixwXpKZbVz-8okp1mkr054D0lx88Z5H11IIF_evQK3qibOHUA4X3b1LkvbtDeTHtwZRkwdvNtoGW7PiOfdTPvO2GPYS_zOu3vhOYS0fG5N9vpf1yfebbAULRrl78_YiFg1XUaodL2dRvGIFviQxi_wZKXsFHnP6XwhLXYwaDlf3DkXEx12HfDXLmst8Om6zmYZu5O7DIHMGd1UvfiV-4IS0a1_2BTsORvjLixlpZVVR_BlYoVu-LYE8D2Dmew0"/>
-<img alt="Analyst" class="w-8 h-8 rounded-full border-2 border-surface-container-highest" data-alt="portrait of a focused business woman looking at a screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0gB68S9l3Cvz8LSy2ChTZ6Qb46VKb88woPYkfLJ26hQYkF2xBKPT-dBE8JjrvIGd2niPKzicYFlRkVA635dble1j-RsgF8rBIB8_r5-wFS3ZOSoqqPtaIHJhp-6ATVT_OGc3uZVKsBbqDvFauXrRaH8W8CRBwu0tIgPybJaP7V4AeUXZ8wg5PTnE-6kI5pHmELLV9VkiJcVl_F7I7yx6M6bMgKWNqkMiL2otPwfDWS-6apeJ7zFpAdaSEJMjy7QrcYxFf6BGwVgo"/>
-</div>
-<span class="text-xs text-on-surface-variant italic">Verified by 4 Strategy Leads</span>
-</div>
-</div>
-<!-- Side Card 1 -->
-<div class="col-span-4 bg-primary text-white rounded-3xl p-8 custom-shadow flex flex-col justify-between">
-<div>
-<div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-<span class="material-symbols-outlined text-white" data-icon="auto_awesome">auto_awesome</span>
-</div>
-<h3 class="text-2xl font-headline font-bold mb-4">AI Trend Synthesis</h3>
-<p class="text-on-primary-container text-sm leading-relaxed mb-6">
-                        Macro analysis indicates a shift toward hyper-localized data centers. Competitors Beta and Gamma are showing early alignment patterns.
-                    </p>
-<ul class="space-y-4">
-<li class="flex items-start gap-3">
-<span class="material-symbols-outlined text-secondary-fixed-dim text-xl" data-icon="check_circle">check_circle</span>
-<span class="text-sm">Real-estate surges in tech hubs</span>
-</li>
-<li class="flex items-start gap-3">
-<span class="material-symbols-outlined text-secondary-fixed-dim text-xl" data-icon="check_circle">check_circle</span>
-<span class="text-sm">Grid-level power agreements</span>
-</li>
-</ul>
-</div>
-<button class="mt-8 text-secondary-fixed-dim font-bold text-sm flex items-center gap-2 group">
-                    Explore Synthesis <span class="material-symbols-outlined transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
-</button>
-</div>
-<!-- Prediction Card 2 -->
-<div class="col-span-4 bg-surface-container-highest rounded-3xl p-6 custom-shadow">
-<div class="flex items-center gap-3 mb-6">
-<div class="w-10 h-10 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-</div>
-<div>
-<span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Beta Solutions</span>
-<h4 class="text-lg font-headline font-bold text-primary leading-tight">Tiered Pricing Revamp</h4>
-</div>
-</div>
-<div class="mb-6">
-<p class="text-primary/70 text-[10px] font-bold uppercase tracking-widest mb-2">Confidence</p>
-<div class="flex items-center gap-3">
-<div class="h-2 flex-grow bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-secondary rounded-full" style="width: 78%"></div>
-</div>
-<span class="text-xs font-extrabold text-secondary">78%</span>
-</div>
-</div>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Transition from seat-based to usage-based billing models across Enterprise plans.</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">Web Changes</span>
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">Beta Program</span>
-</div>
-</div>
-<!-- Prediction Card 3 -->
-<div class="col-span-4 bg-surface-container-highest rounded-3xl p-6 custom-shadow">
-<div class="flex items-center gap-3 mb-6">
-<div class="w-10 h-10 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm">
-<span class="material-symbols-outlined" data-icon="experiment">experiment</span>
-</div>
-<div>
-<span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Gamma Core</span>
-<h4 class="text-lg font-headline font-bold text-primary leading-tight">R&amp;D Lab Opening</h4>
-</div>
-</div>
-<div class="mb-6">
-<p class="text-primary/70 text-[10px] font-bold uppercase tracking-widest mb-2">Confidence</p>
-<div class="flex items-center gap-3">
-<div class="h-2 flex-grow bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-secondary rounded-full" style="width: 65%"></div>
-</div>
-<span class="text-xs font-extrabold text-secondary">65%</span>
-</div>
-</div>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Establishing a dedicated quantum computing research facility in Singapore by EOY.</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">Talent Poaching</span>
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">Grants</span>
-</div>
-</div>
-<!-- Prediction Card 4 -->
-<div class="col-span-4 bg-surface-container-highest rounded-3xl p-6 custom-shadow">
-<div class="flex items-center gap-3 mb-6">
-<div class="w-10 h-10 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm">
-<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
-</div>
-<div>
-<span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Delta Group</span>
-<h4 class="text-lg font-headline font-bold text-primary leading-tight">Strategic Partnership</h4>
-</div>
-</div>
-<div class="mb-6">
-<p class="text-primary/70 text-[10px] font-bold uppercase tracking-widest mb-2">Confidence</p>
-<div class="flex items-center gap-3">
-<div class="h-2 flex-grow bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
-</div>
-<span class="text-xs font-extrabold text-secondary">85%</span>
-</div>
-</div>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Joint venture with cloud provider for sovereign data sovereignity solutions.</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">API Updates</span>
-<span class="px-3 py-1 bg-surface-container-lowest text-[10px] font-bold text-primary rounded-full">Legal filings</span>
-</div>
-</div>
-<!-- Insight Panel (Lower Half) -->
-<div class="col-span-12 mt-6">
-<div class="bg-surface-container-low rounded-3xl p-10 flex gap-12 items-center">
-<div class="w-1/3">
-<h3 class="text-3xl font-headline font-extrabold text-primary mb-4 tracking-tight">Signal Sentiment Shift</h3>
-<p class="text-on-surface-variant text-base leading-relaxed">
-                            Aggregated market signals suggest a 14% increase in aggressive expansion maneuvers across the sector.
-                        </p>
-</div>
-<div class="w-2/3 grid grid-cols-3 gap-6">
-<div class="bg-surface-container-lowest p-6 rounded-2xl custom-shadow border border-outline-variant/10">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Sector Heat</p>
-<p class="text-3xl font-headline font-extrabold text-primary">+22.4%</p>
-<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-error rounded-full" style="width: 70%"></div>
-</div>
-</div>
-<div class="bg-surface-container-lowest p-6 rounded-2xl custom-shadow border border-outline-variant/10">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">M&amp;A Likelihood</p>
-<p class="text-3xl font-headline font-extrabold text-primary">High</p>
-<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-<div class="bg-surface-container-lowest p-6 rounded-2xl custom-shadow border border-outline-variant/10">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Hiring Velocity</p>
-<p class="text-3xl font-headline font-extrabold text-primary">Stable</p>
-<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-primary-container rounded-full" style="width: 45%"></div>
-</div>
-</div>
-</div>
-</div>
+<div class="col-span-12 p-8 text-center text-on-surface-variant italic opacity-60">
+    Trend sentiment analysis derived from recent memory bank ingestion.
 </div>
 </div>
 </main>
@@ -1479,60 +575,10 @@
 <h1 class="text-4xl font-extrabold font-manrope tracking-tighter text-on-surface mb-2">System Management</h1>
 <p class="text-on-surface-variant max-w-xl">Comprehensive oversight of intelligence pipelines, user access controls, and computational performance metrics.</p>
 </div>
-<!-- System Usage Stats Bento Grid -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-<div class="bg-surface-container-highest rounded-xl p-6 flex flex-col justify-between h-40">
-<div class="flex justify-between items-start">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Total Queries</span>
-<span class="material-symbols-outlined text-secondary">database</span>
-</div>
-<div>
-<div class="text-3xl font-extrabold font-manrope">1.2M</div>
-<div class="text-[10px] text-on-surface-variant flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-[12px] text-green-600">trending_up</span>
-<span class="text-green-600 font-bold">+12.4%</span> since last month
-                    </div>
-</div>
-</div>
-<div class="bg-surface-container-highest rounded-xl p-6 flex flex-col justify-between h-40">
-<div class="flex justify-between items-start">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">API Usage</span>
-<span class="material-symbols-outlined text-secondary">hub</span>
-</div>
-<div>
-<div class="text-3xl font-extrabold font-manrope">84.2%</div>
-<div class="w-full bg-surface-container-low h-1 rounded-full mt-4 overflow-hidden">
-<div class="bg-secondary h-full w-[84%]"></div>
-</div>
-<div class="text-[10px] text-on-surface-variant mt-2">Quota: 4.2M of 5M calls</div>
-</div>
-</div>
-<div class="bg-surface-container-highest rounded-xl p-6 flex flex-col justify-between h-40">
-<div class="flex justify-between items-start">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Active Nodes</span>
-<span class="material-symbols-outlined text-secondary">cloud_done</span>
-</div>
-<div>
-<div class="text-3xl font-extrabold font-manrope">24/24</div>
-<div class="text-[10px] text-green-600 font-bold flex items-center gap-1 mt-1">
-<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                        All systems operational
-                    </div>
-</div>
-</div>
-<div class="bg-surface-container-highest rounded-xl p-6 flex flex-col justify-between h-40">
-<div class="flex justify-between items-start">
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Response Time</span>
-<span class="material-symbols-outlined text-secondary">speed</span>
-</div>
-<div>
-<div class="text-3xl font-extrabold font-manrope">182ms</div>
-<div class="text-[10px] text-on-surface-variant flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-[12px] text-secondary">info</span>
-                        P99 latency within thresholds
-                    </div>
-</div>
-</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+    <div class="col-span-2 p-8 text-center text-on-surface-variant italic opacity-40 bg-surface-container rounded-2xl">
+        System operations metrics and node status are simulated for the current environment.
+    </div>
 </div>
 <!-- Main Workspace Layout: Asymmetrical Columns -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -1557,78 +603,8 @@
 </thead>
 <tbody class="divide-y divide-surface-container/50">
 <!-- Table Rows -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-5">
-<div class="flex items-center gap-3">
-<img alt="User" class="w-10 h-10 rounded-lg grayscale group-hover:grayscale-0 transition-all" data-alt="Portrait of a creative designer with glasses, high-key lighting, bright studio background, sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWniGhEtDj6_kLXasXszc4tOes4jRtrHIXl2t2f9e-3V7R86t4AbPjbXOKSIiflRnxEoMT_4onLMnKUpU_QNlDDc-VM1chl534zp-UWzD7i4yPXxjIM1uInVH3CcFFk3uS8ieHu71qq5GhJ1l7gwxzs5t7xnMuWJo65OILapYH-j5jsUqGrVDIFOgfBtrm2qvKUcEagJRtptyX49o5ONcEwrvX5UCkiXhSPTzMkoBDdM0sBQm3fQkZqSlvlXEDjdEMy8RUSk-Arao"/>
-<div>
-<div class="text-sm font-bold">Marcus Thorne</div>
-<div class="text-xs text-on-surface-variant">m.thorne@globalcorp.com</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="px-3 py-1 bg-secondary-container text-on-secondary-fixed text-[10px] font-extrabold rounded-full">Senior Analyst</span>
-</td>
-<td class="px-6 py-5 text-sm text-on-surface-variant">2 mins ago</td>
-<td class="px-6 py-5 text-right">
-<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">more_vert</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-5">
-<div class="flex items-center gap-3">
-<img alt="User" class="w-10 h-10 rounded-lg grayscale group-hover:grayscale-0 transition-all" data-alt="Portrait of a young woman with a joyful expression, soft natural sunlight filtering through leaves in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXP42lPO7QVcYfnOXFRCKbrCfxWWARWJvE91h4sr9fNh_DMrvGpKaSiVuNvGu0vk6JC7fLI3dxB-X7mKoVM0fJO_dXlEMc9OL4zenQbzaeM_I1bsZPeYQSTpzu6rN9EnEgcekoNZF41xFjKIspifhPau7l5LlVNrbSeaEHfjGjfocPb6NO0LC-mWoCIFcvkflDqpcaBWKgRg82AaspV2QAc7TBljl8_i3yPYyWjTCJEXl_qc-1ij0v2fL6_lpMYPrGgPwGFhHGD_k"/>
-<div>
-<div class="text-sm font-bold">Elena Rodriguez</div>
-<div class="text-xs text-on-surface-variant">e.rod@globalcorp.com</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant text-[10px] font-extrabold rounded-full">Contributor</span>
-</td>
-<td class="px-6 py-5 text-sm text-on-surface-variant">45 mins ago</td>
-<td class="px-6 py-5 text-right">
-<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">more_vert</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-white font-bold text-xs">SK</div>
-<div>
-<div class="text-sm font-bold">Sarah Jenkins</div>
-<div class="text-xs text-on-surface-variant">s.jenkins@partner.co</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="px-3 py-1 bg-tertiary-fixed-dim text-on-tertiary-fixed text-[10px] font-extrabold rounded-full">External Partner</span>
-</td>
-<td class="px-6 py-5 text-sm text-on-surface-variant">3 hours ago</td>
-<td class="px-6 py-5 text-right">
-<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">more_vert</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-6 py-5">
-<div class="flex items-center gap-3">
-<img alt="User" class="w-10 h-10 rounded-lg grayscale group-hover:grayscale-0 transition-all" data-alt="Headshot of a man with a professional look, warm evening lighting, blurred cityscape in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsK-cOnS8DAso6UztFjXmeV6RD83oEC98VpBu8YRoVBZnKpCO2KQKsLSXjff2BQiwlrKYkmhqZzhcH3tO3QVfXdwrlVtKVxr-TK5TB3bdU5D4lVqVD2uiPedlkofuiuQfPG7LpjI4-jonyEWkmsY5EZKcsb8whHltTcMTjVuJM8oUNrG0alqRmzsgv4OJHc3kbgmlDkIIQlFhmKD_SzKj6ReIxf6b3zeH8QBoEA4q0T68_ngmVM2zsbwUxxSFL3cKpEKKvC_UYOC0"/>
-<div>
-<div class="text-sm font-bold">David Chen</div>
-<div class="text-xs text-on-surface-variant">d.chen@globalcorp.com</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="px-3 py-1 bg-secondary-container text-on-secondary-fixed text-[10px] font-extrabold rounded-full">Senior Analyst</span>
-</td>
-<td class="px-6 py-5 text-sm text-on-surface-variant">1 day ago</td>
-<td class="px-6 py-5 text-right">
-<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">more_vert</button>
-</td>
-</tr>
+<!-- Access Management Placeholder -->
+<tr><td colspan="4" class="p-12 text-center text-on-surface-variant italic">System access in read-only mode. All users authorized via single-sign-on.</td></tr>
 </tbody>
 </table>
 </div>
@@ -1641,52 +617,15 @@
 </div>
 <div class="bg-surface-container-high rounded-xl p-1 space-y-1">
 <!-- Log Item 1 -->
-<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
-<div class="flex justify-between items-start mb-2">
-<span class="text-[10px] font-extrabold text-secondary tracking-widest uppercase">Security Event</span>
-<span class="text-[9px] text-on-surface-variant">12:44:02</span>
-</div>
-<p class="text-xs text-on-surface leading-relaxed mb-3">Multi-factor bypass attempt detected on node <strong>EU-WEST-4</strong>. Token invalidated.</p>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-error"></span>
-<span class="text-[10px] font-bold text-error uppercase">High Priority</span>
-</div>
-</div>
-<!-- Log Item 2 -->
-<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
-<div class="flex justify-between items-start mb-2">
-<span class="text-[10px] font-extrabold text-secondary tracking-widest uppercase">System Sync</span>
-<span class="text-[9px] text-on-surface-variant">12:30:15</span>
-</div>
-<p class="text-xs text-on-surface leading-relaxed mb-3">Competitive index sync completed. 1,402 records updated in primary archive.</p>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-green-500"></span>
-<span class="text-[10px] font-bold text-on-surface-variant uppercase">Success</span>
-</div>
-</div>
-<!-- Log Item 3 -->
-<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm opacity-70">
-<div class="flex justify-between items-start mb-2">
-<span class="text-[10px] font-extrabold text-secondary tracking-widest uppercase">User Action</span>
-<span class="text-[9px] text-on-surface-variant">11:58:44</span>
-</div>
-<p class="text-xs text-on-surface leading-relaxed mb-3">New analysis report generated by <strong>Marcus Thorne</strong> for Q3 Market Trends.</p>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-blue-500"></span>
-<span class="text-[10px] font-bold text-on-surface-variant uppercase">Info</span>
-</div>
-</div>
-<!-- Log Item 4 -->
-<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm opacity-50">
-<div class="flex justify-between items-start mb-2">
-<span class="text-[10px] font-extrabold text-secondary tracking-widest uppercase">Optimization</span>
-<span class="text-[9px] text-on-surface-variant">11:12:01</span>
-</div>
-<p class="text-xs text-on-surface leading-relaxed mb-3">Database indexing routine automatically initiated for performance maintenance.</p>
-</div>
+<!-- Log Placeholder -->
+<div class="p-8 text-center text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-container-lowest/50 rounded-lg">System Logs Clear</div>
 <button class="w-full py-3 text-[11px] font-bold text-secondary text-center uppercase tracking-widest hover:bg-surface-container transition-colors rounded-lg">
                         Load Full Audit Log
                     </button>
+<button id="seedBtn" type="button" onclick="seedData()" class="w-full mt-2 py-3 text-[11px] font-bold text-white text-center uppercase tracking-widest bg-secondary hover:bg-primary transition-colors rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">database</span> Load Demo Data
+</button>
+<div id="seedStatus" class="mt-2 text-xs font-semibold text-center hidden"></div>
 </div>
 </div>
 </div>
@@ -1743,4 +682,13 @@
 </div>
 </div>
 </main>
-</div></div><script src="app.js"></script></body></html>
+</div></div>
+<!-- ═══ DEBUG TEST BUTTONS — remove after confirming API calls work ══════ -->
+<div id="__debugBar" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1d1b19;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:monospace;font-size:12px;">
+  <span style="color:#b7c7ea;font-weight:bold;margin-right:4px;">DEBUG:</span>
+  <button type="button" onclick="sendQuery()" style="background:#505e7d;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:bold;">TEST QUERY</button>
+  <button type="button" onclick="ingestSignal()" style="background:#505e7d;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:bold;">TEST INGEST</button>
+  <button type="button" onclick="seedData()" style="background:#505e7d;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:bold;">TEST SEED</button>
+  <span style="color:#76777e;margin-left:8px;">Open Console (F12) to see logs</span>
+</div>
+<script src="app.js"></script></body></html>

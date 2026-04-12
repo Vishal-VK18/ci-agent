@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "competitor_name": "Horizon AI",
+    "signal_type": "feature",
+    "summary": "Horizon AI launched a new 'Workflow Automator' using agentic patterns.",
+    "event_date": "2026-04-01",
+    "entities": ["Horizon AI", "Workflow Automator"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "pricing",
+    "summary": "Meridian AI moved to a usage-based pricing model starting at $0.05 per token.",
+    "event_date": "2026-03-15",
+    "entities": ["Meridian AI", "Usage-based pricing"]
+  },
+  {
+    "competitor_name": "Zenith AI",
+    "signal_type": "hiring",
+    "summary": "Zenith AI hired the former Head of Product from Acme Corp to lead their LLM division.",
+    "event_date": "2026-04-05",
+    "entities": ["Zenith AI", "Acme Corp"]
+  }
+]

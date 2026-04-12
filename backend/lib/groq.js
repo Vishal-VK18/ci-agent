@@ -32,15 +32,19 @@ async function callGroq(systemPrompt, userPrompt, retries = 3) {
       const groq = getGroqClient();
 
       const response = await groq.chat.completions.create({
-        model: "qwen/qwen3-32b",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
       });
 
-      const text = response.choices?.[0]?.message?.content;
-      if (!text) throw new Error("Empty response from Groq");
+      const raw  = response.choices?.[0]?.message?.content;
+      if (!raw) throw new Error("Empty response from Groq");
+
+      // Strip <think>...</think> blocks produced by reasoning models
+      const text = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+      if (!text) throw new Error("Response was empty after stripping think blocks");
 
       return text.trim();
     } catch (err) {
