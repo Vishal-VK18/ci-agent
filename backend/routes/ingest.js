@@ -28,15 +28,34 @@ router.post("/", async (req, res) => {
     // Step 1: Build and call extraction prompt
     const userPrompt = buildExtractionPrompt(text.trim(), competitor_name || null);
     const rawResponse = await callGroq(EXTRACT_SYSTEM, userPrompt);
+    console.log('[Ingest] Raw Groq response:', rawResponse);
 
-    // Step 2: Clean JSON — strip code fences if present
+    // Step 2: Extract JSON — strip code fences, think blocks, and surrounding text
     let cleanedJson = rawResponse.trim();
-    if (cleanedJson.startsWith("```")) {
+
+    // Remove any residual <think> blocks (safety net)
+    cleanedJson = cleanedJson.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
+    // Strip markdown code fences if present
+    if (cleanedJson.startsWith('```')) {
       cleanedJson = cleanedJson
-        .replace(/^```(?:json)?\s*/i, "")
-        .replace(/```\s*$/, "")
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/```\s*$/, '')
         .trim();
     }
+
+    // Extract the JSON object by finding first { and last }
+    const jsonStart = cleanedJson.indexOf('{');
+    const jsonEnd   = cleanedJson.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
+      console.error('[Ingest] No JSON object found in response:', rawResponse);
+      return res.status(422).json({
+        error: 'LLM did not return a JSON object.',
+        raw: rawResponse,
+      });
+    }
+    cleanedJson = cleanedJson.slice(jsonStart, jsonEnd + 1);
+
 
     // Step 3: Parse JSON safely
     let signal;
