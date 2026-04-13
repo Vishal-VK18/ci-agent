@@ -91,7 +91,7 @@
             <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-on-surface">Alex Mercer</p>
+                    <p class="text-xs font-bold text-on-surface">Demo User</p>
                     <p class="text-[10px] text-outline font-medium uppercase tracking-widest">Senior Analyst</p>
                 </div>
                 <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
@@ -173,20 +173,29 @@
                             <button class="px-4 py-2 bg-surface-container-low text-xs font-bold rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">1M</button>
                         </div>
                     </div>
-                    <div class="flex-1 w-full bg-surface-container-low/20 rounded-xl flex items-center justify-center border border-dashed border-outline-variant/50">
-                          <p class="text-outline font-medium text-sm">Chart rendering engine loading...</p>
+                    <div id="dashboardTimelineWrap" class="flex-1 w-full bg-surface-container-low/20 rounded-xl border border-dashed border-outline-variant/50 overflow-y-auto max-h-[300px]">
+                        <div id="dashboardTimelineList" class="p-4 space-y-4">
+                            <p class="text-outline font-medium text-sm text-center py-10">Intelligence timeline loading...</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 flex-1 flex flex-col items-center justify-center text-center">
-                        <div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center mb-6">
-                            <span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
+                    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-lg border border-slate-100 flex-1 flex flex-col">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-symbols-outlined text-error">campaign</span>
+                            <h4 class="text-lg font-headline font-bold text-on-surface">Pattern Alerts</h4>
+                            <button class="ml-auto p-2 text-primary hover:bg-surface-container-low rounded-lg transition-all" onclick="updateDashboard()">
+                                <span class="material-symbols-outlined text-sm">refresh</span>
+                            </button>
                         </div>
-                        <h4 class="text-lg font-headline font-bold text-on-surface mb-2">No alerts detected</h4>
-                        <p class="text-sm text-on-surface-variant max-w-[200px] leading-relaxed">No critical insights in the selected period.</p>
-                        <button class="mt-8 px-6 py-3 text-sm font-bold text-primary hover:bg-surface-container-low rounded-xl transition-all" onclick="updateDashboard()">
-                            Force Refresh
-                        </button>
+                        <div id="dashboardPatternAlerts" class="flex-1 overflow-y-auto space-y-4 max-h-[350px] pr-2">
+                            <div class="text-center py-10 flex flex-col items-center">
+                                <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-outline text-3xl">inventory_2</span>
+                                </div>
+                                <p class="text-sm text-on-surface-variant">Scanning for insights...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -204,10 +213,10 @@
                 </div>
                 <div>
                     <h2 class="font-headline text-4xl font-extrabold text-on-surface leading-tight">
-                        READY FOR <span class="text-primary-container">INTERROGATION.</span>
+                        INTELLIGENCE <span class="text-primary-container">AGENT.</span>
                     </h2>
                     <p class="font-body text-outline text-base max-w-lg mx-auto mt-2">
-                        I am your competitive intelligence synthetic agent. Ask anything.
+                        Ask a question to begin analysis
                     </p>
                 </div>
             </div>
@@ -314,7 +323,7 @@
                                     <div class="text-[10px] text-outline uppercase font-semibold">Inference Engine</div>
                                 </div>
                             </div>
-                            <span class="material-symbols-outlined text-green-500">check_circle</span>
+                            <span id="health-groq" class="material-symbols-outlined text-outline">pending</span>
                         </div>
                         <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
                             <div class="flex items-center gap-4">
@@ -324,7 +333,7 @@
                                     <div class="text-[10px] text-outline uppercase font-semibold">Vector Database</div>
                                 </div>
                             </div>
-                            <span class="material-symbols-outlined text-green-500">check_circle</span>
+                            <span id="health-hindsight" class="material-symbols-outlined text-outline">pending</span>
                         </div>
                     </div>
                 </div>

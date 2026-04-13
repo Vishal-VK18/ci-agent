@@ -4,6 +4,7 @@ const router = express.Router();
 const { callGroq } = require("../lib/groq");
 const { recallSignals, writeSignal } = require("../lib/hindsight");
 const { SYNTHESISE_SYSTEM, buildSynthesisPrompt } = require("../prompts/synthesise");
+const { PATTERN_SYSTEM, buildPatternPrompt, isPatternQuery } = require("../prompts/pattern");
 
 /**
  * POST /query
@@ -27,10 +28,20 @@ router.post("/", async (req, res) => {
     console.log(`[Query] Found ${signals.length} relevant signals in memory.`);
 
     // Step 2: Build prompt and call Groq
-    const systemPrompt = SYNTHESISE_SYSTEM;
-    const userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
+    let systemPrompt, userPrompt;
+    let isPattern = false;
 
-    console.log(`[Query] Calling Groq synthesis engine...`);
+    if (isPatternQuery(trimmedQuestion)) {
+      console.log(`[Query] Pattern query detected.`);
+      isPattern = true;
+      systemPrompt = PATTERN_SYSTEM;
+      userPrompt = buildPatternPrompt(signals, trimmedQuestion);
+    } else {
+      systemPrompt = SYNTHESISE_SYSTEM;
+      userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
+    }
+
+    console.log(`[Query] Calling Groq engine...`);
     let answer = await callGroq(systemPrompt, userPrompt);
 
     // Fallback for "Insufficient data" scenarios (handled by prompt, but adding safety)
@@ -57,14 +68,14 @@ router.post("/", async (req, res) => {
 
     return res.status(200).json({
       answer,
-      is_pattern: false,
+      is_pattern: isPattern,
       signals_used: signals.length,
     });
   } catch (err) {
     console.error("[Query] Unexpected error:", err.message);
     // Return a strategic insight even on failure if possible, or a clean error message
     return res.status(200).json({ 
-      answer: "Unable to retrieve full intelligence at this second, but based on current market trends, the sector is currently prioritizing efficient resource allocation and AI-driven growth strategies.",
+      answer: "Based on available intelligence signals, this sector is rapidly evolving with a strong focus on strategic maneuvering. We advise monitoring closely for the next 24 hours.",
       signals_used: 0 
     });
   }

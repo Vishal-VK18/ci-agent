@@ -70,7 +70,7 @@ var app = (function() {
         scrollChatToBottom();
     }
 
-    function addBotMessage(text) {
+    function addBotMessage(text, signalsCount = null) {
         const thread = document.getElementById('chatMessages');
         if (!thread) return;
 
@@ -79,9 +79,14 @@ var app = (function() {
         
         const cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
 
+        const countHtml = signalsCount !== null 
+            ? `<div class="mt-3 text-[10px] font-bold text-slate-400 tracking-wider uppercase border-t border-slate-100 pt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">database</span> Recalled from ${signalsCount} intelligence signals</div>` 
+            : '';
+
         msg.innerHTML = `
-            <div class="bg-white text-slate-900 p-5 px-6 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 max-w-[90%]">
+            <div class="bg-white text-slate-900 p-5 px-6 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 max-w-[90%] flex flex-col">
                 <p class="text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(cleanText)}</p>
+                ${countHtml}
             </div>`;
         thread.appendChild(msg);
         scrollChatToBottom();
@@ -140,7 +145,44 @@ var app = (function() {
             document.getElementById('stat-active-competitors').textContent = stats.active_competitors || 0;
             document.getElementById('stat-patterns').textContent = stats.patterns_detected || 0;
             
-            // fetchSignals('dashboardSignalsTableBody', 10); // Disabled for new UI
+            const timelineRes = await callApi(`${API_BASE}/analytics/timeline`);
+            const tContainer = document.getElementById('dashboardTimelineList');
+            if (tContainer && timelineRes.timeline) {
+                if (timelineRes.timeline.length === 0) {
+                    tContainer.innerHTML = '<p class="text-outline font-medium text-sm text-center py-10">No intelligence signals available yet</p>';
+                } else {
+                    tContainer.innerHTML = timelineRes.timeline.map(t => `
+                        <div class="bg-surface-container-lowest p-4 rounded-lg border border-slate-100 shadow-sm flex flex-col gap-2 relative">
+                             <div class="flex justify-between items-start">
+                                 <div class="flex items-center gap-2">
+                                     <span class="px-2 py-1 bg-surface-container-low text-[10px] font-bold text-slate-600 rounded-md uppercase">${escapeHtml(t.type || 'intelligence')}</span>
+                                     <span class="font-bold text-sm text-slate-900">${escapeHtml(t.competitor || 'Unknown')}</span>
+                                 </div>
+                                 <span class="text-[10px] text-slate-400 font-medium">${new Date(t.date || Date.now()).toLocaleDateString()}</span>
+                             </div>
+                             <p class="text-sm text-slate-600 leading-snug">${escapeHtml(t.description || t.title || '')}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            const patternsRes = await callApi(`${API_BASE}/analytics/patterns`);
+            const pContainer = document.getElementById('dashboardPatternAlerts');
+            if (pContainer && patternsRes.patterns) {
+                if (patternsRes.patterns.length === 0) {
+                     pContainer.innerHTML = '<p class="text-outline font-medium text-sm text-center py-10">No alerts detected</p>';
+                } else {
+                     pContainer.innerHTML = patternsRes.patterns.map(p => `
+                        <div class="p-4 bg-red-50 rounded-xl border border-red-100 flex flex-col gap-2">
+                             <div class="flex items-center justify-between">
+                                 <strong class="text-red-900 text-sm font-headline">${escapeHtml(p.name)}</strong>
+                                 <span class="text-[10px] bg-red-200 text-red-800 px-2 py-1 rounded-full font-bold">${escapeHtml(p.confidence || 'Medium')}</span>
+                             </div>
+                             <p class="text-xs text-red-800 leading-relaxed">${escapeHtml((p.evidence || []).join(" "))}</p>
+                        </div>
+                     `).join('');
+                }
+            }
         } catch (err) {
             console.warn("[Dashboard] Refresh failed", err);
         }
@@ -208,7 +250,7 @@ var app = (function() {
             const data = await callApi(`${API_BASE}/query`, 'POST', { question: userInput });
             removeLoadingMessage();
             if (data.answer) {
-                addBotMessage(data.answer);
+                addBotMessage(data.answer, data.signals_used);
             } else {
                 addBotMessage("Intelligence error: " + (data.error || 'Unknown server error.'));
             }
@@ -258,14 +300,43 @@ var app = (function() {
         finally { if (btn) btn.innerHTML = 'Load Demo Data'; }
     }
 
+    async function checkHealth() {
+        try {
+            const res = await callApi(`${API_BASE}/health`);
+            const groqSpan = document.getElementById('health-groq');
+            const hindsightSpan = document.getElementById('health-hindsight');
+            
+            if (groqSpan) {
+                if (res.groq === 'online') {
+                    groqSpan.className = 'material-symbols-outlined text-green-500';
+                    groqSpan.textContent = 'check_circle';
+                } else {
+                    groqSpan.className = 'material-symbols-outlined text-red-500';
+                    groqSpan.textContent = 'error';
+                }
+            }
+            if (hindsightSpan) {
+                if (res.hindsight === 'connected') {
+                    hindsightSpan.className = 'material-symbols-outlined text-green-500';
+                    hindsightSpan.textContent = 'check_circle';
+                } else {
+                    hindsightSpan.className = 'material-symbols-outlined text-red-500';
+                    hindsightSpan.textContent = 'error';
+                }
+            }
+        } catch (err) {
+            console.warn("Health check failed");
+        }
+    }
+
     return {
         showPage,
         sendQuery,
         ingestSignal,
         seedData,
         init: function() {
-            console.log("CI AGENT INITIALIZING...");
             showPage("dashboardPage");
+            checkHealth();
 
             const chatSendBtn = document.getElementById('chatSendBtn');
             if (chatSendBtn) chatSendBtn.onclick = sendQuery;
@@ -312,8 +383,6 @@ var app = (function() {
                     }
                 });
             });
-
-            console.log("SYSTEM ACTIVE.");
         }
     };
 })();
