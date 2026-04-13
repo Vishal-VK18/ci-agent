@@ -6,6 +6,7 @@ const path = require("path");
 const ingestRouter = require("./routes/ingest");
 const queryRouter  = require("./routes/query");
 const seedRouter   = require("./routes/seed");
+const resetRouter  = require("./routes/reset");
 const signalsRouter = require("./routes/signals");
 const analyticsRouter = require("./routes/analytics");
 
@@ -65,6 +66,7 @@ app.get("/health", (req, res) => {
 app.use("/ingest", ingestRouter);
 app.use("/query", queryRouter);
 app.use("/seed", seedRouter);
+app.use("/reset", resetRouter);
 app.use("/signals", signalsRouter);
 app.use("/analytics", analyticsRouter);
 

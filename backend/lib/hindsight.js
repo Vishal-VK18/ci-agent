@@ -119,4 +119,4 @@ async function recallSignals(query, topK = 5) {
   return [];
 }
 
-module.exports = { writeSignal, recallSignals, BANK_ID };
+module.exports = { writeSignal, recallSignals, getClient, BANK_ID };

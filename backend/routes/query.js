@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
       answer = await callGroq(SYNTHESISE_SYSTEM, fallbackPrompt);
     }
 
-    // Log Q&A feedback
+    // Step 4: Log Q&A feedback
     try {
       await writeSignal({
         signal_type: "messaging",

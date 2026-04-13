@@ -32,7 +32,7 @@ async function callGroq(systemPrompt, userPrompt, retries = 3) {
       const groq = getGroqClient();
 
       const response = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -48,7 +48,8 @@ async function callGroq(systemPrompt, userPrompt, retries = 3) {
 
       return text.trim();
     } catch (err) {
-      if (attempt < retries) {
+      const is429 = err?.status === 429 || err?.message?.includes('rate_limit_exceeded');
+      if (!is429 && attempt < retries) {
         const delay = delays[attempt] || 4000;
         console.warn(
           `[Groq] Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`,
