@@ -303,9 +303,9 @@ var app = (function () {
         currentRange = range;
         document.querySelectorAll('.time-btn').forEach(btn => {
             const active = btn.getAttribute('data-range') === range;
-            btn.style.background = active ? 'rgba(43,89,255,0.2)' : 'var(--pill-bg)';
-            btn.style.borderColor = active ? 'rgba(43,89,255,0.4)' : 'var(--pill-border)';
-            btn.style.color = active ? '#7b9fff' : 'var(--text-secondary)';
+            btn.style.background = active ? 'rgba(114,47,55,0.25)' : 'var(--pill-bg)';
+            btn.style.borderColor = active ? 'rgba(114,47,55,0.5)' : 'var(--pill-border)';
+            btn.style.color = active ? '#e8a0a8' : 'var(--text-secondary)';
         });
         // Re-render with current signals
         callApi(`${API_BASE}/signals?limit=200`)
@@ -329,7 +329,18 @@ var app = (function () {
                 d.setHours(now.getHours() - 23 + i, 0, 0, 0);
                 return { key: d.toISOString().slice(0, 13), label: i % 4 === 0 ? `${d.getHours()}h` : '', signals: 0, competitors: new Set() };
             });
-            labelFn = s => new Date(s.event_date).toISOString().slice(0, 13);
+            labelFn = s => {
+                const d = new Date(s.event_date);
+                // If no time component (date-only string), treat as today and use current hour
+                const hasTime = s.event_date && s.event_date.length > 10;
+                if (!hasTime) {
+                    const today = now.toISOString().slice(0, 10);
+                    const sigDay = s.event_date ? s.event_date.slice(0, 10) : '';
+                    if (sigDay === today) return now.toISOString().slice(0, 13);
+                    return null;
+                }
+                return d.toISOString().slice(0, 13);
+            };
         } else if (range === '1W') {
             buckets = Array.from({ length: 7 }, (_, i) => {
                 const d = new Date(now);
@@ -351,7 +362,7 @@ var app = (function () {
         signals.forEach(s => {
             if (!s.event_date || s.event_date === 'unknown') return;
             const key = labelFn(s);
-            if (bucketMap[key]) {
+            if (key && bucketMap[key]) {
                 bucketMap[key].signals++;
                 if (s.competitor_name) bucketMap[key].competitors.add(s.competitor_name);
             }
@@ -460,7 +471,7 @@ var app = (function () {
             counts[t] = (counts[t] || 0) + 1;
         });
 
-        const colors = ['#2b59ff', '#00e5a0', '#ffb547', '#ff4d6d', '#a78bfa'];
+        const colors = ['#722F37', '#c8a96e', '#e8c97a', '#e8a0a8', '#EFDFBB'];
         const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
 
@@ -471,7 +482,7 @@ var app = (function () {
 
         arcsG.innerHTML = '';
         legend.innerHTML = '';
-        if (centerText) centerText.textContent = total;
+        if (centerText) { centerText.textContent = total; centerText.setAttribute('fill', '#2a0d10'); }
 
         const R = 54, r = 34;
         let angle = -Math.PI / 2;
@@ -500,9 +511,9 @@ var app = (function () {
             item.innerHTML = `
                 <div class="flex items-center gap-2">
                     <div style="width:10px;height:10px;border-radius:3px;background:${color};flex-shrink:0"></div>
-                    <span class="text-xs font-semibold capitalize" style="color:var(--text-secondary)">${escapeHtml(type)}</span>
+                    <span class="text-xs font-semibold capitalize" style="color:#2a0d10">${escapeHtml(type)}</span>
                 </div>
-                <span class="text-xs font-bold" style="color:var(--text-primary)">${count}</span>`;
+                <span class="text-xs font-bold" style="color:#2a0d10">${count}</span>`;
             legend.appendChild(item);
 
             angle += slice;
@@ -527,7 +538,7 @@ var app = (function () {
 
         const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
         const max = entries[0]?.[1] || 1;
-        const colors = ['#2b59ff', '#00e5a0', '#ffb547', '#ff4d6d', '#a78bfa', '#38bdf8'];
+        const colors = ['#722F37', '#9e6b50', '#a07830', '#5c3d2e', '#7a4f3a', '#4a2c2a'];
 
         if (entries.length === 0) {
             container.innerHTML = `<p class="text-xs text-center py-8" style="color:var(--text-muted)">No competitor data yet</p>`;
@@ -543,10 +554,10 @@ var app = (function () {
                 <div class="competitor-avatar" style="background:${color}22;color:${color};font-size:0.7rem">${escapeHtml(initials)}</div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between mb-1">
-                        <span class="text-xs font-bold truncate" style="color:var(--text-primary)">${escapeHtml(name)}</span>
+                        <span class="text-xs font-bold truncate" style="color:#2a0d10">${escapeHtml(name)}</span>
                         <span class="text-xs font-bold ml-2" style="color:${color}">${count}</span>
                     </div>
-                    <div style="height:5px;background:var(--border);border-radius:4px;overflow:hidden">
+                    <div style="height:5px;background:rgba(114,47,55,0.18);border-radius:4px;overflow:hidden">
                         <div class="bar-fill" style="height:100%;width:0%;background:${color};border-radius:4px;transition:width 0.9s cubic-bezier(0.16,1,0.3,1) ${i * 80}ms" data-target="${pct}"></div>
                     </div>
                 </div>

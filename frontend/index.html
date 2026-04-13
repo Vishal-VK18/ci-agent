@@ -14,12 +14,13 @@
     <!-- Sidebar -->
     <aside class="fixed left-0 top-0 h-full z-40 w-64 flex flex-col" style="background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);">
         <div class="p-6 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg sidebar-logo-icon">
-                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">shield_person</span>
+            <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-lg" style="background:transparent">
+                <img src="logo.png" alt="CIA" style="width:40px;height:40px;object-fit:cover;border-radius:50%" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <span class="material-symbols-outlined text-white text-[20px]" style="display:none;font-variation-settings:'FILL' 1">shield_person</span>
             </div>
             <div>
-                <div class="font-bold text-lg leading-tight" style="color:var(--text-primary)">CIA</div>
-                <div class="text-[10px] uppercase tracking-widest font-bold" style="color:var(--text-muted)">Intelligence Agent</div>
+                <div class="font-bold text-lg leading-tight" style="color:#EFDFBB">CIA</div>
+                <div class="text-[10px] uppercase tracking-widest font-bold" style="color:rgba(239,223,187,0.5)">Intelligence Agent</div>
             </div>
         </div>
 
@@ -85,46 +86,46 @@
 
             <!-- Stat Cards -->
             <div class="grid grid-cols-2 gap-4 mb-6" style="grid-template-columns:repeat(4,1fr)">
-                <div class="stat-card" style="--card-glow:rgba(43,89,255,0.1)">
-                    <div class="stat-icon" style="background:rgba(43,89,255,0.15)">
-                        <span class="material-symbols-outlined" style="color:var(--primary);font-size:20px">radar</span>
+                <div class="stat-card" style="--card-glow:rgba(114,47,55,0.12)">
+                    <div class="stat-icon" style="background:rgba(114,47,55,0.15)">
+                        <span class="material-symbols-outlined" style="color:#722F37;font-size:20px">radar</span>
                     </div>
-                    <div class="stat-label">Total Signals</div>
-                    <div class="stat-value" id="stat-total-signals">0</div>
-                    <div class="stat-badge mt-3" style="background:rgba(43,89,255,0.12);color:#7b9fff;border:1px solid rgba(43,89,255,0.2)">
+                    <div class="stat-label" style="color:rgba(42,13,16,0.5)">Total Signals</div>
+                    <div class="stat-value" style="color:#2a0d10" id="stat-total-signals">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(114,47,55,0.12);color:#722F37;border:1px solid rgba(114,47,55,0.25)">
                         <span class="material-symbols-outlined text-[14px]">trending_up</span> Live
                     </div>
                 </div>
 
-                <div class="stat-card" style="--card-glow:rgba(0,229,160,0.08)">
-                    <div class="stat-icon" style="background:rgba(0,229,160,0.12)">
-                        <span class="material-symbols-outlined" style="color:var(--green);font-size:20px">groups</span>
+                <div class="stat-card" style="--card-glow:rgba(158,107,80,0.1)">
+                    <div class="stat-icon" style="background:rgba(158,107,80,0.15)">
+                        <span class="material-symbols-outlined" style="color:#9e6b50;font-size:20px">groups</span>
                     </div>
-                    <div class="stat-label">Active Competitors</div>
-                    <div class="stat-value" id="stat-active-competitors">0</div>
-                    <div class="stat-badge mt-3" style="background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.2)">
+                    <div class="stat-label" style="color:rgba(42,13,16,0.5)">Active Competitors</div>
+                    <div class="stat-value" style="color:#2a0d10" id="stat-active-competitors">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(158,107,80,0.12);color:#9e6b50;border:1px solid rgba(158,107,80,0.25)">
                         <span class="material-symbols-outlined text-[14px]">check_circle</span> Tracking
                     </div>
                 </div>
 
-                <div class="stat-card" style="--card-glow:rgba(255,181,71,0.08)">
-                    <div class="stat-icon" style="background:rgba(255,181,71,0.12)">
-                        <span class="material-symbols-outlined" style="color:var(--amber);font-size:20px">verified</span>
+                <div class="stat-card" style="--card-glow:rgba(200,169,110,0.1)">
+                    <div class="stat-icon" style="background:rgba(200,169,110,0.2)">
+                        <span class="material-symbols-outlined" style="color:#a07830;font-size:20px">verified</span>
                     </div>
-                    <div class="stat-label">Confidence Score</div>
-                    <div class="stat-value" id="stat-confidence">94%</div>
-                    <div style="height:3px;background:var(--border);border-radius:4px;margin-top:12px">
-                        <div style="width:94%;height:100%;background:var(--amber);border-radius:4px"></div>
+                    <div class="stat-label" style="color:rgba(42,13,16,0.5)">Confidence Score</div>
+                    <div class="stat-value" style="color:#2a0d10" id="stat-confidence">94%</div>
+                    <div style="height:3px;background:rgba(114,47,55,0.15);border-radius:4px;margin-top:12px">
+                        <div style="width:94%;height:100%;background:#a07830;border-radius:4px"></div>
                     </div>
                 </div>
 
-                <div class="stat-card" style="--card-glow:rgba(255,77,109,0.08)">
-                    <div class="stat-icon" style="background:rgba(255,77,109,0.12)">
-                        <span class="material-symbols-outlined" style="color:var(--red);font-size:20px">hub</span>
+                <div class="stat-card" style="--card-glow:rgba(114,47,55,0.1)">
+                    <div class="stat-icon" style="background:rgba(114,47,55,0.12)">
+                        <span class="material-symbols-outlined" style="color:#722F37;font-size:20px">hub</span>
                     </div>
-                    <div class="stat-label">Patterns Detected</div>
-                    <div class="stat-value" id="stat-patterns">0</div>
-                    <div class="stat-badge mt-3" style="background:rgba(255,77,109,0.1);color:var(--red);border:1px solid rgba(255,77,109,0.2)">
+                    <div class="stat-label" style="color:rgba(42,13,16,0.5)">Patterns Detected</div>
+                    <div class="stat-value" style="color:#2a0d10" id="stat-patterns">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(114,47,55,0.1);color:#722F37;border:1px solid rgba(114,47,55,0.2)">
                         <span class="material-symbols-outlined text-[14px]">priority_high</span> Review
                     </div>
                 </div>
@@ -140,20 +141,20 @@
                         </div>
                         <div class="flex gap-2" id="timeRangeBtns">
                             <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1D" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1D</button>
-                            <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold" data-range="1W" style="background:rgba(43,89,255,0.2);border:1px solid rgba(43,89,255,0.4);color:#7b9fff">1W</button>
+                            <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold" data-range="1W" style="background:rgba(114,47,55,0.2);border:1px solid rgba(114,47,55,0.4);color:#722F37">1W</button>
                             <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1M" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1M</button>
                         </div>
                     </div>
                     <div class="chart-legend mb-3" id="activityLegend">
-                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#2b59ff"></div>Signals</div>
-                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#00e5a0"></div>Competitors</div>
+                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#722F37"></div>Signals</div>
+                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#9e6b50"></div>Competitors</div>
                     </div>
                     <div class="chart-wrap flex-1 relative" id="activityChartWrap">
                         <svg id="activityChart" width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="none">
                             <defs>
                                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#2b59ff" stop-opacity="0.25"/>
-                                    <stop offset="100%" stop-color="#2b59ff" stop-opacity="0"/>
+                                    <stop offset="0%" stop-color="#722F37" stop-opacity="0.25"/>
+                                    <stop offset="100%" stop-color="#722F37" stop-opacity="0"/>
                                 </linearGradient>
                             </defs>
                             <g id="chartGridLines"></g>
@@ -177,7 +178,7 @@
                     <div class="flex items-center justify-center flex-1" style="min-height:160px">
                         <svg id="donutChart" width="140" height="140" viewBox="0 0 140 140">
                             <g id="donutArcs" transform="translate(70,70)"></g>
-                            <text id="donutCenter" x="70" y="74" text-anchor="middle" font-size="18" font-weight="800" fill="var(--text-primary)" font-family="Plus Jakarta Sans">—</text>
+                            <text id="donutCenter" x="70" y="74" text-anchor="middle" font-size="18" font-weight="800" fill="#2a0d10" font-family="Plus Jakarta Sans">—</text>
                         </svg>
                     </div>
                     <div id="donutLegend" class="space-y-2 mt-2"></div>
@@ -210,8 +211,9 @@
         <!-- CHAT PAGE -->
         <div id="chatPage" class="page hidden px-6 py-8 flex flex-col" style="height:calc(100vh - 56px)">
             <div class="text-center mb-6" id="chat-welcome">
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 sidebar-logo-icon">
-                    <span class="material-symbols-outlined text-white text-[32px]" style="font-variation-settings:'FILL' 1">smart_toy</span>
+                <div class="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center mx-auto mb-4" style="background:transparent">
+                    <img src="logo.png" alt="CIA Logo" style="width:64px;height:64px;object-fit:cover;border-radius:50%" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                    <span class="material-symbols-outlined text-[32px] sidebar-logo-icon w-16 h-16 rounded-full" style="display:none;font-variation-settings:'FILL' 1;color:#722F37">smart_toy</span>
                 </div>
                 <h2 class="font-extrabold text-2xl tracking-tight mb-1" style="color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">
                     READY FOR <span style="color:var(--primary)">INTERROGATION.</span>
@@ -278,7 +280,7 @@
                 <div class="admin-card flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-6">
-                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(43,89,255,0.15)">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(114,47,55,0.15)">
                                 <span class="material-symbols-outlined text-[24px]" style="color:var(--primary);font-variation-settings:'FILL' 1">database</span>
                             </div>
                             <span class="badge badge-blue">Foundation</span>
@@ -322,7 +324,7 @@
                 </div>
                 <div class="space-y-3">
                     <div class="signal-item">
-                        <div class="competitor-avatar" style="background:rgba(43,89,255,0.15)">
+                        <div class="competitor-avatar" style="background:rgba(114,47,55,0.15)">
                             <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">memory</span>
                         </div>
                         <div class="flex-1">
@@ -332,7 +334,7 @@
                         <span class="material-symbols-outlined text-[20px]" style="color:var(--green)">check_circle</span>
                     </div>
                     <div class="signal-item">
-                        <div class="competitor-avatar" style="background:rgba(43,89,255,0.15)">
+                        <div class="competitor-avatar" style="background:rgba(114,47,55,0.15)">
                             <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">storage</span>
                         </div>
                         <div class="flex-1">
