@@ -708,6 +708,9 @@ main { background: var(--surface); }
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* ─── SPINNER ───────────────────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ─── UTILITY ────────────────────────────────────────────────────────────────── */
 .text-gradient-blue {
   background: linear-gradient(135deg, #e8a0a8, #722F37);
@@ -720,5 +723,34 @@ main { background: var(--surface); }
 
 #chatMessages {
   overflow-y: auto;
-  max-height: calc(100vh - 280px);
+}
+
+#chat-input:focus,
+#chat-input:active,
+#chat-input-wrapper:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+#chat-input::-webkit-scrollbar {
+  display: none;
+}
+
+#chat-input {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes chat-ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+.chat-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(114,47,55,0.4) 0%, rgba(114,47,55,0) 70%);
+  transform: scale(0);
+  animation: chat-ripple 0.6s linear;
+  pointer-events: none;
 }

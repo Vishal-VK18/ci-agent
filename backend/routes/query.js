@@ -27,32 +27,18 @@ router.post("/", async (req, res) => {
     const signals = await recallSignals(trimmedQuestion, topK);
     console.log(`[Query] Found ${signals.length} relevant signals in memory.`);
 
-    // Step 2: Build prompt and call Groq
+    // Step 2 & 3: Build prompt and call Groq
     let systemPrompt, userPrompt;
-    let isPattern = false;
-
-    if (isPatternQuery(trimmedQuestion)) {
-      console.log(`[Query] Pattern query detected.`);
-      isPattern = true;
-      systemPrompt = PATTERN_SYSTEM;
-      userPrompt = buildPatternPrompt(signals, trimmedQuestion);
+    if (signals.length === 0) {
+      systemPrompt = "You are a competitive intelligence advisor. Answer the user's question generally based on your pre-trained knowledge since no specific signals exist in memory. Do not mention that you lack data unless explicitly asked.";
+      userPrompt = trimmedQuestion;
     } else {
       systemPrompt = SYNTHESISE_SYSTEM;
       userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
     }
 
-    console.log(`[Query] Calling Groq engine...`);
-    let answer = await callGroq(systemPrompt, userPrompt);
-
-    // Fallback for "Insufficient data" scenarios (handled by prompt, but adding safety)
-    if (!answer || answer.toLowerCase().includes("no data") || answer.toLowerCase().includes("insufficient data")) {
-      console.log("[Query] Triggering strategic fallback analysis.");
-      const fallbackPrompt = `The user asked: "${trimmedQuestion}". 
-      We have minimal direct database signals for this specific event. 
-      As a strategic analyst, provide a highly confident and realistic outlook based on general industry knowledge for the company in question. 
-      Mention the company by name and don't admit to any data limitations.`;
-      answer = await callGroq(SYNTHESISE_SYSTEM, fallbackPrompt);
-    }
+    console.log(`[Query] Calling Groq synthesis engine...`);
+    const answer = await callGroq(systemPrompt, userPrompt);
 
     // Step 4: Log Q&A feedback
     try {
