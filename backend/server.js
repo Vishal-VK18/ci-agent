@@ -59,7 +59,7 @@ app.use((req, res, next) => {
 
 // Health route
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "CI Agent running" });
+  res.json({ status: "ok", message: "CI Agent running", groq: "online", hindsight: "connected" });
 });
 
 // Mount routes

@@ -61,11 +61,11 @@
             <button class="p-2 rounded-lg transition-all" style="color:var(--text-secondary)" onmouseover="this.style.background='var(--surface-card-hover)'" onmouseout="this.style.background='transparent'">
                 <span class="material-symbols-outlined text-[20px]">notifications</span>
             </button>
-            <div style="width:1px;height:28px;background:var(--border)"></div>
-            <div class="flex items-center gap-2">
-                <div class="text-right">
-                    <p class="text-xs font-bold" style="color:var(--text-primary)">Admin Arya</p>
-                    <p class="text-[10px] uppercase tracking-widest" style="color:var(--text-muted)">Senior Analyst</p>
+            <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-on-surface">Demo User</p>
+                    <p class="text-[10px] text-outline font-medium uppercase tracking-widest">Senior Analyst</p>
                 </div>
                 <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--surface-card);border:1px solid var(--border)">
                     <span class="material-symbols-outlined text-[18px]" style="color:var(--text-secondary)">person</span>
@@ -170,28 +170,29 @@
                             <span class="tt-val2" id="ttVal2"></span>
                         </div>
                     </div>
-                </div>
-
-                <div class="glass-card p-6 flex flex-col">
-                    <h3 class="font-bold text-base mb-1" style="color:var(--text-primary)">Signal Types</h3>
-                    <p class="text-xs mb-4" style="color:var(--text-secondary)">Distribution by category</p>
-                    <div class="flex items-center justify-center flex-1" style="min-height:160px">
-                        <svg id="donutChart" width="140" height="140" viewBox="0 0 140 140">
-                            <g id="donutArcs" transform="translate(70,70)"></g>
-                            <text id="donutCenter" x="70" y="74" text-anchor="middle" font-size="18" font-weight="800" fill="#2a0d10" font-family="Plus Jakarta Sans">—</text>
-                        </svg>
+                    <div id="dashboardTimelineWrap" class="flex-1 w-full bg-surface-container-low/20 rounded-xl border border-dashed border-outline-variant/50 overflow-y-auto max-h-[300px]">
+                        <div id="dashboardTimelineList" class="p-4 space-y-4">
+                            <p class="text-outline font-medium text-sm text-center py-10">Intelligence timeline loading...</p>
+                        </div>
                     </div>
                     <div id="donutLegend" class="space-y-2 mt-2"></div>
                 </div>
-            </div>
-
-            <!-- Competitor Bar Chart + Refresh -->
-            <div class="grid gap-4" style="grid-template-columns:1fr 260px">
-                <div class="glass-card p-6" style="min-height:220px">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 class="font-bold text-base" style="color:var(--text-primary)">Competitor Activity</h3>
-                            <p class="text-xs mt-0.5" style="color:var(--text-secondary)">Signals per competitor</p>
+                <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-lg border border-slate-100 flex-1 flex flex-col">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-symbols-outlined text-error">campaign</span>
+                            <h4 class="text-lg font-headline font-bold text-on-surface">Pattern Alerts</h4>
+                            <button class="ml-auto p-2 text-primary hover:bg-surface-container-low rounded-lg transition-all" onclick="updateDashboard()">
+                                <span class="material-symbols-outlined text-sm">refresh</span>
+                            </button>
+                        </div>
+                        <div id="dashboardPatternAlerts" class="flex-1 overflow-y-auto space-y-4 max-h-[350px] pr-2">
+                            <div class="text-center py-10 flex flex-col items-center">
+                                <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-outline text-3xl">inventory_2</span>
+                                </div>
+                                <p class="text-sm text-on-surface-variant">Scanning for insights...</p>
+                            </div>
                         </div>
                     </div>
                     <div id="competitorBars" class="space-y-3"></div>
@@ -209,11 +210,22 @@
         </div>
 
         <!-- CHAT PAGE -->
-        <div id="chatPage" class="page hidden px-6 py-8 flex flex-col" style="height:calc(100vh - 56px)">
-            <div class="text-center mb-6" id="chat-welcome">
-                <div class="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center mx-auto mb-4" style="background:transparent">
-                    <img src="logo.png" alt="CIA Logo" style="width:64px;height:64px;object-fit:cover;border-radius:50%" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-                    <span class="material-symbols-outlined text-[32px] sidebar-logo-icon w-16 h-16 rounded-full" style="display:none;font-variation-settings:'FILL' 1;color:#722F37">smart_toy</span>
+        <div id="chatPage" class="page hidden h-[85vh] flex flex-col relative w-full pt-4">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                <div class="absolute -top-[10%] -right-[5%] w-[40%] h-[50%] bg-[#003fdd]/5 blur-[120px] rounded-full"></div>
+            </div>
+            
+            <div class="text-center space-y-6 mb-6 z-10" id="chat-welcome">
+                <div class="w-20 h-20 bg-surface-container-lowest rounded-3xl shadow-lg flex items-center justify-center mx-auto border border-white/50">
+                    <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                </div>
+                <div>
+                    <h2 class="font-headline text-4xl font-extrabold text-on-surface leading-tight">
+                        INTELLIGENCE <span class="text-primary-container">AGENT.</span>
+                    </h2>
+                    <p class="font-body text-outline text-base max-w-lg mx-auto mt-2">
+                        Ask a question to begin analysis
+                    </p>
                 </div>
                 <h2 class="font-extrabold text-2xl tracking-tight mb-1" style="color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">
                     READY FOR <span style="color:var(--primary)">INTERROGATION.</span>
@@ -333,13 +345,27 @@
                         </div>
                         <span class="material-symbols-outlined text-[20px]" style="color:var(--green)">check_circle</span>
                     </div>
-                    <div class="signal-item">
-                        <div class="competitor-avatar" style="background:rgba(114,47,55,0.15)">
-                            <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">storage</span>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <span class="material-symbols-outlined text-outline">memory</span>
+                                <div>
+                                    <div class="font-bold text-on-surface text-sm">GROQ LPU</div>
+                                    <div class="text-[10px] text-outline uppercase font-semibold">Inference Engine</div>
+                                </div>
+                            </div>
+                            <span id="health-groq" class="material-symbols-outlined text-outline">pending</span>
                         </div>
-                        <div class="flex-1">
-                            <div class="font-bold text-sm" style="color:var(--text-primary)">HINDSIGHT MEMORY</div>
-                            <div class="text-[10px] uppercase font-semibold" style="color:var(--text-muted)">Vector Database</div>
+                        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <span class="material-symbols-outlined text-outline">storage</span>
+                                <div>
+                                    <div class="font-bold text-on-surface text-sm">HINDSIGHT MEMORY</div>
+                                    <div class="text-[10px] text-outline uppercase font-semibold">Vector Database</div>
+                                </div>
+                            </div>
+                            <span id="health-hindsight" class="material-symbols-outlined text-outline">pending</span>
                         </div>
                         <span class="material-symbols-outlined text-[20px]" style="color:var(--green)">check_circle</span>
                     </div>

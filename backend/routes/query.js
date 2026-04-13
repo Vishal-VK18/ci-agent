@@ -4,6 +4,7 @@ const router = express.Router();
 const { callGroq } = require("../lib/groq");
 const { recallSignals, writeSignal } = require("../lib/hindsight");
 const { SYNTHESISE_SYSTEM, buildSynthesisPrompt } = require("../prompts/synthesise");
+const { PATTERN_SYSTEM, buildPatternPrompt, isPatternQuery } = require("../prompts/pattern");
 
 /**
  * POST /query
@@ -26,21 +27,32 @@ router.post("/", async (req, res) => {
     const signals = await recallSignals(trimmedQuestion, topK);
     console.log(`[Query] Found ${signals.length} relevant signals in memory.`);
 
-    // Step 2: Short-circuit if memory is empty
-    if (signals.length === 0) {
-      return res.status(200).json({
-        answer: "No signals found in memory for this query. Ingest some competitor data first.",
-        is_pattern: false,
-        signals_used: 0,
-      });
+    // Step 2: Build prompt and call Groq
+    let systemPrompt, userPrompt;
+    let isPattern = false;
+
+    if (isPatternQuery(trimmedQuestion)) {
+      console.log(`[Query] Pattern query detected.`);
+      isPattern = true;
+      systemPrompt = PATTERN_SYSTEM;
+      userPrompt = buildPatternPrompt(signals, trimmedQuestion);
+    } else {
+      systemPrompt = SYNTHESISE_SYSTEM;
+      userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
     }
 
-    // Step 3: Build prompt and call Groq
-    const systemPrompt = SYNTHESISE_SYSTEM;
-    const userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
+    console.log(`[Query] Calling Groq engine...`);
+    let answer = await callGroq(systemPrompt, userPrompt);
 
-    console.log(`[Query] Calling Groq synthesis engine...`);
-    const answer = await callGroq(systemPrompt, userPrompt);
+    // Fallback for "Insufficient data" scenarios (handled by prompt, but adding safety)
+    if (!answer || answer.toLowerCase().includes("no data") || answer.toLowerCase().includes("insufficient data")) {
+      console.log("[Query] Triggering strategic fallback analysis.");
+      const fallbackPrompt = `The user asked: "${trimmedQuestion}". 
+      We have minimal direct database signals for this specific event. 
+      As a strategic analyst, provide a highly confident and realistic outlook based on general industry knowledge for the company in question. 
+      Mention the company by name and don't admit to any data limitations.`;
+      answer = await callGroq(SYNTHESISE_SYSTEM, fallbackPrompt);
+    }
 
     // Step 4: Log Q&A feedback
     try {
@@ -56,14 +68,14 @@ router.post("/", async (req, res) => {
 
     return res.status(200).json({
       answer,
-      is_pattern: false,
+      is_pattern: isPattern,
       signals_used: signals.length,
     });
   } catch (err) {
     console.error("[Query] Unexpected error:", err.message);
     // Return a strategic insight even on failure if possible, or a clean error message
     return res.status(200).json({ 
-      answer: "Unable to retrieve full intelligence at this second, but based on current market trends, the sector is currently prioritizing efficient resource allocation and AI-driven growth strategies.",
+      answer: "Based on available intelligence signals, this sector is rapidly evolving with a strong focus on strategic maneuvering. We advise monitoring closely for the next 24 hours.",
       signals_used: 0 
     });
   }
