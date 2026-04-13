@@ -105,18 +105,22 @@ async function writeSignal(signal) {
  * @param {number} topK  - Number of top results (default 5).
  * @returns {Promise<Object[]>}
  */
-async function recallSignals(query, topK = 5) {
+async function recallSignals(query, topK = 3) {
   const hindsight = getClient();
 
   const result = await hindsight.recall(BANK_ID, query, {
-    budget: topK > 10 ? "high" : "mid",
+    budget: "low",   // "mid"/"high" retrieves the full bank (~79 signals) — too slow
+    top_k: topK,
   });
 
-  if (Array.isArray(result))                       return result;
-  if (result && Array.isArray(result.memories))    return result.memories;
-  if (result && Array.isArray(result.results))     return result.results;
+  let signals;
+  if (Array.isArray(result))                     signals = result;
+  else if (result && Array.isArray(result.memories)) signals = result.memories;
+  else if (result && Array.isArray(result.results))  signals = result.results;
+  else signals = [];
 
-  return [];
+  // Hard-cap regardless of what the client returns
+  return signals.slice(0, topK);
 }
 
 module.exports = { writeSignal, recallSignals, getClient, BANK_ID };
