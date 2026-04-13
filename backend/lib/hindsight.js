@@ -89,6 +89,7 @@ async function writeSignal(signal) {
     event_date:      signal.event_date  || '',                          // null → ''
     entities:        (signal.entities   || []).join(', '),              // array → string
     stored_at:       signal.stored_at   || new Date().toISOString(),
+    source:          signal.source      || 'signal',                   // 'feedback' for Q&A loop
   };
 
   return await hindsight.retain(BANK_ID, content, {
@@ -101,25 +102,38 @@ async function writeSignal(signal) {
 /**
  * Retrieve relevant signals from Hindsight via semantic search.
  *
- * @param {string} query - Natural language query to match against.
- * @param {number} topK  - Number of top results (default 5).
+ * @param {string}  query          - Natural language query to match against.
+ * @param {number}  topK           - Number of top results (default 12).
+ * @param {boolean} excludeFeedback - Strip Q&A feedback signals from results (default true).
  * @returns {Promise<Object[]>}
  */
-async function recallSignals(query, topK = 3) {
+async function recallSignals(query, topK = 12, excludeFeedback = true) {
   const hindsight = getClient();
 
+  // budget scales with how many signals we need:
+  //   topK > 10  → "high"  (full semantic sweep, needed for multi-agent pipeline)
+  //   topK > 5   → "mid"   (balanced — analytics endpoints)
+  //   otherwise  → "low"   (fast, single-purpose lookups)
+  const budget = topK > 10 ? "high" : topK > 5 ? "mid" : "low";
+
   const result = await hindsight.recall(BANK_ID, query, {
-    budget: "low",   // "mid"/"high" retrieves the full bank (~79 signals) — too slow
+    budget,
     top_k: topK,
   });
 
   let signals;
-  if (Array.isArray(result))                     signals = result;
+  if (Array.isArray(result))                        signals = result;
   else if (result && Array.isArray(result.memories)) signals = result.memories;
   else if (result && Array.isArray(result.results))  signals = result.results;
   else signals = [];
 
-  // Hard-cap regardless of what the client returns
+  if (excludeFeedback) {
+    signals = signals.filter(s => {
+      const src = s.metadata?.source || s.metadata?.properties?.source || '';
+      return src !== 'feedback';
+    });
+  }
+
   return signals.slice(0, topK);
 }
 

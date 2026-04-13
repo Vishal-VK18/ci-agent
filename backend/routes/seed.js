@@ -43,33 +43,26 @@ router.post("/", async (req, res) => {
     let count = 0;
     const errors = [];
 
-    // Write each signal one by one with 200ms delay between
-    for (let i = 0; i < fixtures.length; i++) {
-      const signal = fixtures[i];
+    const now = new Date().toISOString();
+    const results = await Promise.allSettled(
+      fixtures.map(signal =>
+        writeSignal({ ...signal, stored_at: signal.stored_at || now })
+      )
+    );
 
-      try {
-        // Add stored_at timestamp if not present
-        if (!signal.stored_at) {
-          signal.stored_at = new Date().toISOString();
-        }
-
-        await writeSignal(signal);
+    results.forEach((r, i) => {
+      if (r.status === "fulfilled") {
         count++;
-        console.log(`[Seed] Wrote signal ${i + 1}/${total}: ${signal.competitor_name || "unknown"}`);
-      } catch (writeErr) {
-        console.error(`[Seed] Failed to write signal ${i + 1}:`, writeErr.message);
+        console.log(`[Seed] Wrote signal ${i + 1}/${total}: ${fixtures[i].competitor_name || "unknown"}`);
+      } else {
+        console.error(`[Seed] Failed to write signal ${i + 1}:`, r.reason?.message);
         errors.push({
           index: i,
-          signal: signal?.competitor_name || `index_${i}`,
-          error: writeErr.message,
+          signal: fixtures[i]?.competitor_name || `index_${i}`,
+          error: r.reason?.message,
         });
       }
-
-      // 200ms delay between writes (skip delay after last signal)
-      if (i < fixtures.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
-      }
-    }
+    });
 
     return res.status(200).json({ count, total, errors });
   } catch (err) {

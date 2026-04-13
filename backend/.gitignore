@@ -28,3 +28,6 @@ build/
 
 # Optional: coverage
 coverage/
+
+# Debug / test scripts
+scripts/

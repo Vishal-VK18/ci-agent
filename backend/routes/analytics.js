@@ -29,9 +29,9 @@ function makeTimeout(ms) {
 // ---------------------------------------------------------------------------
 router.get("/stats", async (req, res) => {
   try {
-    // topK=15 is safe with budget:"low" and gives enough for meaningful stats
+    // topK=30 with budget:"high" to capture the full seeded dataset
     const signals = await Promise.race([
-      recallSignals("competitor signal intelligence", 15),
+      recallSignals("competitor signal intelligence", 30),
       makeTimeout(8000),
     ]);
 
@@ -50,7 +50,7 @@ router.get("/stats", async (req, res) => {
     res.json({
       total_signals:      signals.length,
       active_competitors: competitors.length,
-      patterns_detected:  Math.max(0, Math.floor(signals.length / 4)),
+      patterns_detected:  [...new Set(processed.map(p => p.signal_type))].length,
       accuracy:           "98.4%",
       activity,
     });
@@ -94,6 +94,12 @@ router.get("/patterns", async (req, res) => {
 
     if (signals.length === 0) return res.json({ patterns: [] });
 
+    // Real signal summaries used as evidence — grounded, not LLM-hallucinated
+    const realEvidence = signals
+      .map(s => getMeta(s).summary)
+      .filter(Boolean)
+      .slice(0, 9); // 3 per pattern max
+
     const context = signals.map(s => {
       const meta = getMeta(s);
       return `${meta.competitor_name} [${meta.signal_type}]: ${meta.summary.slice(0, 100)}`;
@@ -115,11 +121,18 @@ ${context}`;
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       patterns = JSON.parse(jsonMatch[0]).patterns;
       if (!Array.isArray(patterns)) throw new Error("not array");
+      // Replace LLM-generated evidence strings with real signal summaries
+      patterns = patterns.map((p, i) => ({
+        ...p,
+        evidence: realEvidence.slice(i * 3, i * 3 + 3),
+      }));
     } catch {
       patterns = [
-        { name: "Pricing Pressure Across All Competitors", confidence: "88%", evidence: ["Multiple pricing changes detected in Q1 2025 across Meridian AI, Stackflow, and NovaDeploy."] },
-        { name: "Parallel Hiring Surge in Engineering", confidence: "82%", evidence: ["All three competitors posted senior engineering roles within the same 6-week window."] },
-        { name: "CRM and Sales Tool Integration Race", confidence: "79%", evidence: ["Stackflow and Meridian AI both launched CRM integrations targeting sales teams in February 2025."] },
+        {
+          name: "Emerging competitive trend",
+          confidence: "low",
+          evidence: realEvidence.slice(0, 3),
+        },
       ];
     }
 
@@ -144,11 +157,11 @@ router.get("/predictions", async (req, res) => {
 
     const context = signals.map(s => {
       const meta = getMeta(s);
-      return `${meta.competitor_name}: ${meta.summary.slice(0, 100)}`;
+      return `${meta.competitor_name} [${meta.signal_type}, ${(meta.event_date || "").split("T")[0]}]: ${meta.summary.slice(0, 100)}`;
     }).join("\n");
 
     const prompt = `Based on these signals, predict 3 upcoming competitor moves.
-Return ONLY valid JSON: {"predictions": [{"competitor": "string", "prediction": "string", "confidence": "string", "impact": "string"}]}
+Return ONLY valid JSON: {"predictions": [{"competitor": "string", "prediction": "string", "confidence": "string", "impact": "string", "evidence": ["string"]}]}
 
 Signals:
 ${context}`;
