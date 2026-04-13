@@ -19,7 +19,7 @@ var app = (function() {
     }
 
     function showPage(pageId) {
-        console.log("Switching to page:", pageId);
+        console.log("Page switch triggered:", pageId);
 
         // Hide all pages using Tailwind's hidden class
         document.querySelectorAll('.page').forEach(p => {
@@ -53,8 +53,8 @@ var app = (function() {
     }
 
     function addUserMessage(text) {
-        const thread = document.getElementById('chatThread');
-        const emptyState = document.getElementById('chatEmptyState');
+        const thread = document.getElementById('chatMessages');
+        const emptyState = document.getElementById('chat-welcome');
         if (!thread) return;
 
         thread.classList.remove('hidden');
@@ -71,7 +71,7 @@ var app = (function() {
     }
 
     function addBotMessage(text) {
-        const thread = document.getElementById('chatThread');
+        const thread = document.getElementById('chatMessages');
         if (!thread) return;
 
         const msg = document.createElement('div');
@@ -88,7 +88,7 @@ var app = (function() {
     }
 
     function showLoadingMessage() {
-        const thread = document.getElementById('chatThread');
+        const thread = document.getElementById('chatMessages');
         if (!thread) return null;
 
         const loader = document.createElement('div');
@@ -136,11 +136,11 @@ var app = (function() {
         console.log("[Dashboard] Refreshing...");
         try {
             const stats = await callApi(`${API_BASE}/analytics/stats`);
-            document.getElementById('totalSignalsCount').textContent = stats.total_signals || 0;
-            document.getElementById('activeCompetitorsCount').textContent = stats.active_competitors || 0;
-            document.getElementById('patternsDetectedCount').textContent = stats.patterns_detected || 0;
+            document.getElementById('stat-total-signals').textContent = stats.total_signals || 0;
+            document.getElementById('stat-active-competitors').textContent = stats.active_competitors || 0;
+            document.getElementById('stat-patterns').textContent = stats.patterns_detected || 0;
             
-            await fetchSignals('dashboardSignalsTableBody', 10);
+            // fetchSignals('dashboardSignalsTableBody', 10); // Disabled for new UI
         } catch (err) {
             console.warn("[Dashboard] Refresh failed", err);
         }
@@ -190,12 +190,15 @@ var app = (function() {
 
     async function sendQuery(event) {
         if (event && event.preventDefault) event.preventDefault();
+        if (event && event.stopPropagation) event.stopPropagation();
+        
+        console.log("Chat submit triggered");
+        showPage('chatPage');
         
         const input = document.getElementById('chatInput');
         const userInput = input ? input.value.trim() : "";
         if (!userInput) return;
 
-        showPage('chatPage');
         input.value = '';
         
         addUserMessage(userInput);
@@ -220,12 +223,8 @@ var app = (function() {
         
         const textInput       = document.getElementById('ingestText');
         const competitorInput = document.getElementById('ingestCompetitor');
-        const storeBtn        = document.getElementById('ingestStoreBtn');
 
         if (!textInput.value.trim()) return alert("Please specify intelligence content.");
-
-        storeBtn.disabled = true;
-        storeBtn.textContent = 'Ingesting...';
 
         try {
             const response = await fetch(`${API_BASE}/ingest`, {
@@ -246,10 +245,6 @@ var app = (function() {
                 alert("Commit failed.");
             }
         } catch (err) { alert("Bridge error."); }
-        finally {
-            storeBtn.disabled = false;
-            storeBtn.textContent = 'Store Signal';
-        }
     }
 
     async function seedData() {
@@ -284,9 +279,10 @@ var app = (function() {
             const chatInput = document.getElementById('chatInput');
             if (chatInput) {
                 chatInput.onkeydown = (e) => {
-                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    // Only trigger on Enter without shift key to allow newlines if it were a textarea, though it's an input
+                    if (e.key === 'Enter') {
                         e.preventDefault();
-                        sendQuery();
+                        sendQuery(e);
                     }
                 };
             }
@@ -324,8 +320,8 @@ var app = (function() {
 
 // Global Redirects for HTML onclick attributes
 function showPage(id)    { app.showPage(id); }
-function sendQuery()     { app.sendQuery(); }
-function ingestSignal()  { app.ingestSignal(); }
+function sendQuery(e)    { app.sendQuery(e); }
+function ingestSignal(e) { app.ingestSignal(e); }
 function seedData()      { app.seedData(); }
 
 document.addEventListener('DOMContentLoaded', app.init);

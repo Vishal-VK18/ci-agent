@@ -1,83 +1,87 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+/* Stitch UI - Base Design System */
 
 :root {
-  --sidebar-width: 260px;
-  --max-content-width: 1200px;
+    --primary-gradient: linear-gradient(135deg, #003fdd 0%, #2b59ff 100%);
+    --sidebar-bg: #1E2A44;
+    --surface-container-low: #f2f4f8;
+    --outline-variant: #c4c5d9;
 }
 
 body {
-    margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: #f8fafc;
+    background-color: #f7f9fd;
+    color: #181c1f;
     overflow-x: hidden;
 }
 
-.app {
-    display: flex;
-    min-height: 100vh;
+.font-headline {
+    font-family: 'Manrope', sans-serif;
 }
 
-.sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 50;
-    background: #ffffff;
-    border-right: 1px solid #e2e8f0;
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-.main {
-    margin-left: var(--sidebar-width);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    background-color: #f8fafc;
-    width: calc(100% - var(--sidebar-width));
-}
-
-.wrapper {
-    width: 100%;
-    max-width: var(--max-content-width);
-    padding: 40px 60px;
-    display: flex;
-    flex-direction: column;
-}
-
+/* Page Transitions */
 .page {
-    width: 100%;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
 }
 
-/* Sidebar active highlight */
+.page.hidden {
+    display: none;
+    opacity: 0;
+}
+
+/* Sidebar Styles */
 .sidebar-item.active {
-    background-color: #f1f5f9 !important;
-    color: #1e293b !important;
-    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-left: 4px solid #2b59ff;
 }
 
-.sidebar-item.active::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 25%;
-    height: 50%;
-    width: 4px;
-    background: #3b82f6;
-    border-radius: 4px 0 0 4px;
+.sidebar-item.active .material-symbols-outlined {
+    color: #2b59ff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Glassmorphism */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animation Keyframes */
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
 }
 
 /* Chat fixes */
 #chatMessages {
-    height: calc(100vh - 250px);
     overflow-y: auto;
-}
-
-/* Hide scrollbar but maintain functionality */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    max-height: calc(100vh - 280px);
 }
