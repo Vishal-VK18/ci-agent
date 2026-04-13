@@ -572,6 +572,17 @@ var app = (function () {
         }));
     }
 
+    // ── New Analysis ──────────────────────────────────────────
+    function newAnalysis() {
+        const thread = document.getElementById('chatMessages');
+        const welcome = document.getElementById('chat-welcome');
+        const chatInput = document.getElementById('chatInput');
+        if (thread) thread.innerHTML = '';
+        if (welcome) welcome.classList.remove('hidden');
+        if (chatInput) chatInput.value = '';
+        showPage('chatPage');
+    }
+
     // ── Init ─────────────────────────────────────────────────
     function init() {
         showPage('dashboardPage');
@@ -612,7 +623,7 @@ var app = (function () {
         });
     }
 
-    return { showPage, sendQuery, ingestSignal, seedData, clearMemory, updateDashboard, init };
+    return { showPage, sendQuery, ingestSignal, seedData, clearMemory, updateDashboard, newAnalysis, init };
 })();
 
 // Global shims for HTML onclick attributes
@@ -621,5 +632,6 @@ function sendQuery(e)    { app.sendQuery(e); }
 function ingestSignal()  { app.ingestSignal(); }
 function seedData()      { app.seedData(); }
 function clearMemory()   { app.clearMemory(); }
+function newAnalysis()   { app.newAnalysis(); }
 
 document.addEventListener('DOMContentLoaded', app.init);
