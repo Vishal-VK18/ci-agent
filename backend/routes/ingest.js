@@ -5,99 +5,113 @@ const { callGroq } = require("../lib/groq");
 const { writeSignal } = require("../lib/hindsight");
 const { EXTRACT_SYSTEM, buildExtractionPrompt } = require("../prompts/extract");
 
-/**
- * POST /ingest
- * Ingest raw text, extract a structured signal via Groq, and store it in Hindsight.
- *
- * Body:
- *   text {string} (required) - Raw text to extract signal from.
- *   competitor_name {string} (optional) - Hint for extraction.
- *
- * Response:
- *   { signal_id, summary, stored_at }
- */
+const VALID_SIGNAL_TYPES = ["pricing", "feature", "hiring", "messaging", "pr", "review"];
+
+// Map common free-text variants from LLM output → valid enum value
+const TYPE_ALIASES = {
+  "price":            "pricing",
+  "price change":     "pricing",
+  "pricing shift":    "pricing",
+  "pricing update":   "pricing",
+  "price reduction":  "pricing",
+  "product update":   "feature",
+  "product launch":   "feature",
+  "product feature":  "feature",
+  "new feature":      "feature",
+  "launch":           "feature",
+  "strategic hire":   "hiring",
+  "hire":             "hiring",
+  "talent":           "hiring",
+  "recruitment":      "hiring",
+  "market expansion": "pr",
+  "expansion":        "pr",
+  "partnership":      "pr",
+  "press release":    "pr",
+  "announcement":     "pr",
+  "strategic investment": "pr",
+  "investment":       "pr",
+  "brand":            "messaging",
+  "rebrand":          "messaging",
+  "campaign":         "messaging",
+  "positioning":      "messaging",
+  "customer review":  "review",
+  "rating":           "review",
+  "feedback":         "review",
+};
+
+function normalizeSignalType(raw) {
+  if (!raw) return null;
+  const lower = String(raw).toLowerCase().trim();
+  if (VALID_SIGNAL_TYPES.includes(lower)) return lower;
+  return TYPE_ALIASES[lower] || null;
+}
+
 router.post("/", async (req, res) => {
   try {
     const { text, competitor_name } = req.body;
 
-    // Input validation
     if (!text || typeof text !== "string" || text.trim().length === 0) {
       return res.status(400).json({ error: "Field 'text' is required and must be a non-empty string." });
     }
 
-    // Step 1: Build and call extraction prompt
     const userPrompt = buildExtractionPrompt(text.trim(), competitor_name || null);
     const rawResponse = await callGroq(EXTRACT_SYSTEM, userPrompt);
-    console.log('[Ingest] Raw Groq response:', rawResponse);
 
-    // Step 2: Extract JSON — strip code fences, think blocks, and surrounding text
-    let cleanedJson = rawResponse.trim();
+    // Strip <think> blocks and markdown fences
+    let cleanedJson = rawResponse.trim()
+      .replace(/<think>[\s\S]*?<\/think>/gi, "")
+      .trim();
 
-    // Remove any residual <think> blocks (safety net)
-    cleanedJson = cleanedJson.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-
-    // Strip markdown code fences if present
-    if (cleanedJson.startsWith('```')) {
+    if (cleanedJson.startsWith("```")) {
       cleanedJson = cleanedJson
-        .replace(/^```(?:json)?\s*/i, '')
-        .replace(/```\s*$/, '')
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/```\s*$/, "")
         .trim();
     }
 
-    // Extract the JSON object by finding first { and last }
-    const jsonStart = cleanedJson.indexOf('{');
-    const jsonEnd   = cleanedJson.lastIndexOf('}');
+    const jsonStart = cleanedJson.indexOf("{");
+    const jsonEnd   = cleanedJson.lastIndexOf("}");
     if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
-      console.error('[Ingest] No JSON object found in response:', rawResponse);
-      return res.status(422).json({
-        error: 'LLM did not return a JSON object.',
-        raw: rawResponse,
-      });
+      return res.status(422).json({ error: "LLM did not return a JSON object.", raw: rawResponse });
     }
     cleanedJson = cleanedJson.slice(jsonStart, jsonEnd + 1);
 
-
-    // Step 3: Parse JSON safely
     let signal;
     try {
       signal = JSON.parse(cleanedJson);
     } catch (parseErr) {
-      console.error("[Ingest] JSON parse error:", parseErr.message);
-      console.error("[Ingest] Raw response:", rawResponse);
-      return res.status(422).json({
-        error: "Failed to parse extracted signal as JSON.",
-        raw: rawResponse,
-      });
+      return res.status(422).json({ error: "Failed to parse extracted signal as JSON.", raw: rawResponse });
     }
 
-    // Step 4: Validate required fields
-    const VALID_SIGNAL_TYPES = ["pricing", "feature", "hiring", "messaging", "pr", "review"];
-
+    // Validate competitor_name
     if (!signal.competitor_name || typeof signal.competitor_name !== "string") {
       return res.status(422).json({ error: "Extracted signal is missing 'competitor_name'." });
     }
-    if (!signal.signal_type || !VALID_SIGNAL_TYPES.includes(signal.signal_type)) {
+
+    // Normalize signal_type — map aliases before rejecting
+    const normalized = normalizeSignalType(signal.signal_type);
+    if (!normalized) {
       return res.status(422).json({
-        error: `Extracted signal has invalid 'signal_type'. Must be one of: ${VALID_SIGNAL_TYPES.join(", ")}.`,
+        error: `Invalid signal_type '${signal.signal_type}'. Must be one of: ${VALID_SIGNAL_TYPES.join(", ")}.`,
       });
     }
+    signal.signal_type = normalized;
+
     if (!signal.summary || typeof signal.summary !== "string") {
       return res.status(422).json({ error: "Extracted signal is missing 'summary'." });
     }
 
-    // Step 5: Add timestamp
-    signal.stored_at = new Date().toISOString();
-    signal.entities = Array.isArray(signal.entities) ? signal.entities : [];
+    signal.stored_at  = new Date().toISOString();
+    signal.entities   = Array.isArray(signal.entities) ? signal.entities : [];
     signal.event_date = signal.event_date || null;
 
-    // Step 6: Store in Hindsight
     const storeResult = await writeSignal(signal);
 
-    // Return structured response
     return res.status(200).json({
-      signal_id: storeResult?.id || storeResult?.signal_id || null,
-      summary: signal.summary,
-      stored_at: signal.stored_at,
+      signal_id:  storeResult?.id || storeResult?.signal_id || null,
+      summary:    signal.summary,
+      signal_type: signal.signal_type,
+      stored_at:  signal.stored_at,
     });
   } catch (err) {
     console.error("[Ingest] Unexpected error:", err.message || err);

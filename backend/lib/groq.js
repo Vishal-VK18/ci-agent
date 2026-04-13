@@ -1,61 +1,69 @@
 const Groq = require("groq-sdk");
 
 let groqClient = null;
+const FAST_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 
-/**
- * Lazily initialize and return the Groq client.
- * Reads GROQ_API_KEY from environment at call time, not at module load time.
- * @returns {Groq}
- */
+const DEFAULT_OPTIONS = {
+  model:                FAST_MODEL,
+  temperature:          0.1,
+  max_completion_tokens: 280,
+};
+
 function getGroqClient() {
   if (!groqClient) {
-    groqClient = new Groq({
-      apiKey: process.env.GROQ_API_KEY,
-    });
+    groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return groqClient;
 }
 
 /**
- * Call Groq LLM with retry logic (exponential backoff).
- *
- * @param {string} systemPrompt - System-level instruction.
- * @param {string} userPrompt - User message content.
- * @param {number} retries - Number of retry attempts (default 3).
- * @returns {Promise<string>} - The response text from the model.
+ * @param {string} systemPrompt
+ * @param {string} userPrompt
+ * @param {object} [overrides] - Optional completion option overrides (e.g. { max_completion_tokens: 400 })
+ * @param {number} [retries=1]
  */
-async function callGroq(systemPrompt, userPrompt, retries = 3) {
-  const delays = [1000, 2000, 4000];
+async function callGroq(systemPrompt, userPrompt, overrides = {}, retries = 1) {
+  // Support legacy callGroq(system, user, retryNumber) signature
+  if (typeof overrides === "number") {
+    retries  = overrides;
+    overrides = {};
+  }
+
+  const options = { ...DEFAULT_OPTIONS, ...overrides };
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const groq = getGroqClient();
+      const groq       = getGroqClient();
+      const controller = new AbortController();
+      const timer      = setTimeout(() => controller.abort(), 10000);
 
-      const response = await groq.chat.completions.create({
-        model: "llama-3.1-8b-instant",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-      });
+      let response;
+      try {
+        response = await groq.chat.completions.create(
+          {
+            ...options,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user",   content: userPrompt },
+            ],
+          },
+          { signal: controller.signal }
+        );
+      } finally {
+        clearTimeout(timer);
+      }
 
-      const raw  = response.choices?.[0]?.message?.content;
+      const raw = response.choices?.[0]?.message?.content;
       if (!raw) throw new Error("Empty response from Groq");
 
-      // Strip <think>...</think> blocks produced by reasoning models
-      const text = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+      const text = raw.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
       if (!text) throw new Error("Response was empty after stripping think blocks");
 
-      return text.trim();
+      return text;
     } catch (err) {
-      const is429 = err?.status === 429 || err?.message?.includes('rate_limit_exceeded');
-      if (!is429 && attempt < retries) {
-        const delay = delays[attempt] || 4000;
-        console.warn(
-          `[Groq] Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`,
-          err.message
-        );
-        await new Promise((resolve) => setTimeout(resolve, delay));
+      if (attempt < retries) {
+        console.warn(`[Groq] Attempt ${attempt + 1} failed. Retrying...`, err.message);
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } else {
         console.error("[Groq] All retry attempts exhausted.");
         throw err;
@@ -64,4 +72,17 @@ async function callGroq(systemPrompt, userPrompt, retries = 3) {
   }
 }
 
-module.exports = { callGroq };
+async function streamGroq(systemPrompt, userPrompt) {
+  const groq = getGroqClient();
+  const stream = await groq.chat.completions.create({
+    ...DEFAULT_OPTIONS,
+    stream: true,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user",   content: userPrompt },
+    ],
+  });
+  return stream;
+}
+
+module.exports = { callGroq, streamGroq, getGroqClient };

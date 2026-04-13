@@ -1,51 +1,212 @@
 [
   {
-    "competitor_name": "Tesla",
-    "signal_type": "Pricing Shift",
-    "summary": "Tesla reduced Model Y price by 8% in China and Germany to aggressively defend market share against BYD and local luxury ICE competitors.",
-    "event_date": "2025-03-01",
-    "entities": ["Tesla", "Model Y", "BYD"]
+    "competitor_name": "Meridian AI",
+    "signal_type": "pricing",
+    "summary": "Meridian AI cut its Pro tier price by 22% to $49/month, undercutting the market average and targeting mid-market SaaS teams.",
+    "event_date": "2025-01-08",
+    "entities": ["Meridian AI", "Pro tier"]
   },
   {
-    "competitor_name": "OpenAI",
-    "signal_type": "Product Update",
-    "summary": "OpenAI unveiled 'GPT-5 Business Prime', a dedicated enterprise-grade agentic architecture with zero-data retention policies for Fortune 100 firms.",
-    "event_date": "2025-02-15",
-    "entities": ["OpenAI", "GPT-5", "Enterprise"]
+    "competitor_name": "Meridian AI",
+    "signal_type": "hiring",
+    "summary": "Meridian AI posted 18 senior ML engineer roles focused on real-time inference optimization, signaling a major model performance push.",
+    "event_date": "2025-01-15",
+    "entities": ["Meridian AI", "ML engineering"]
   },
   {
-    "competitor_name": "Google",
-    "signal_type": "Market Expansion",
-    "summary": "Google Cloud division announced a 25% increase in compute infrastructure spending focused specifically on custom TPU v6 clusters in EMEA region.",
-    "event_date": "2025-03-05",
-    "entities": ["Google", "Cloud", "TPU"]
+    "competitor_name": "Meridian AI",
+    "signal_type": "feature",
+    "summary": "Meridian AI launched a native Slack integration with automated weekly competitor digest reports, directly targeting ops and strategy teams.",
+    "event_date": "2025-01-22",
+    "entities": ["Meridian AI", "Slack", "digest"]
   },
   {
-    "competitor_name": "Amazon",
-    "signal_type": "Market Expansion",
-    "summary": "Amazon Logistics is piloting 'DroneLink Express' in three major Indian metros, aiming for 15-minute delivery on high-margin pharmaceuticals.",
+    "competitor_name": "Meridian AI",
+    "signal_type": "messaging",
+    "summary": "Meridian AI rebranded its homepage headline to 'The Memory-First Intelligence Platform', directly positioning against stateless AI tools.",
+    "event_date": "2025-02-03",
+    "entities": ["Meridian AI", "memory-first"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "pr",
+    "summary": "Meridian AI announced a Series B of $40M led by Sequoia, with stated intent to expand into EMEA and APAC markets within 12 months.",
+    "event_date": "2025-02-10",
+    "entities": ["Meridian AI", "Series B", "Sequoia"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "pricing",
+    "summary": "Meridian AI introduced an annual billing discount of 35%, locking in customers and reducing churn risk ahead of a product refresh.",
+    "event_date": "2025-02-18",
+    "entities": ["Meridian AI", "annual billing"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "feature",
+    "summary": "Meridian AI shipped a multi-source ingestion API supporting PDF, HTML, and RSS feeds, expanding the signal capture surface significantly.",
+    "event_date": "2025-02-25",
+    "entities": ["Meridian AI", "ingestion API", "PDF", "RSS"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "hiring",
+    "summary": "Meridian AI hired a VP of Enterprise Sales from Salesforce, indicating a deliberate shift toward large-account direct sales motion.",
+    "event_date": "2025-03-04",
+    "entities": ["Meridian AI", "VP Sales", "Salesforce"]
+  },
+  {
+    "competitor_name": "Meridian AI",
+    "signal_type": "review",
+    "summary": "G2 reviews for Meridian AI jumped from 3.8 to 4.5 stars following the Slack integration launch, with users citing time savings as the top benefit.",
     "event_date": "2025-03-10",
-    "entities": ["Amazon", "Logistics", "DroneLink"]
+    "entities": ["Meridian AI", "G2", "Slack"]
   },
   {
-    "competitor_name": "Microsoft",
-    "signal_type": "Product Update",
-    "summary": "Microsoft reported deep integration of Copilot AI across its ERP/CRM stack, resulting in a 14% uplift in enterprise per-seat license revenue.",
+    "competitor_name": "Meridian AI",
+    "signal_type": "messaging",
+    "summary": "Meridian AI launched a 'vs. legacy tools' comparison landing page targeting Crayon and Klue users with a direct feature matrix.",
+    "event_date": "2025-03-18",
+    "entities": ["Meridian AI", "Crayon", "Klue"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "pricing",
+    "summary": "Stackflow eliminated its free tier and raised Starter plan pricing from $29 to $59/month, consolidating revenue on paying customers.",
+    "event_date": "2025-01-10",
+    "entities": ["Stackflow", "Starter plan"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "feature",
+    "summary": "Stackflow released an AI-powered battlecard generator that auto-updates when new competitor signals are detected in the memory bank.",
+    "event_date": "2025-01-20",
+    "entities": ["Stackflow", "battlecard", "AI"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "hiring",
+    "summary": "Stackflow opened 12 roles in its London office including a Head of EMEA Partnerships, confirming a European expansion strategy.",
+    "event_date": "2025-01-28",
+    "entities": ["Stackflow", "London", "EMEA"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "pr",
+    "summary": "Stackflow announced a strategic partnership with HubSpot to embed competitive intelligence directly into CRM deal records.",
+    "event_date": "2025-02-06",
+    "entities": ["Stackflow", "HubSpot", "CRM"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "messaging",
+    "summary": "Stackflow's new ad campaign targets sales teams with the tagline 'Win more deals with real-time intel', shifting focus from analysts to AEs.",
+    "event_date": "2025-02-14",
+    "entities": ["Stackflow", "sales teams", "AE"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "feature",
+    "summary": "Stackflow shipped a Salesforce native app allowing reps to pull live competitor summaries inside opportunity records without leaving CRM.",
+    "event_date": "2025-02-22",
+    "entities": ["Stackflow", "Salesforce", "native app"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "pricing",
+    "summary": "Stackflow introduced a per-seat Enterprise tier at $120/seat/month with dedicated CSM and SLA guarantees, targeting Fortune 500 procurement.",
+    "event_date": "2025-03-01",
+    "entities": ["Stackflow", "Enterprise tier", "Fortune 500"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "review",
+    "summary": "Stackflow received 40+ new G2 reviews in February averaging 4.6 stars, with recurring praise for the HubSpot integration speed.",
+    "event_date": "2025-03-07",
+    "entities": ["Stackflow", "G2", "HubSpot"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "hiring",
+    "summary": "Stackflow hired a Director of Product from Gong, suggesting a move toward conversation intelligence and revenue team use cases.",
+    "event_date": "2025-03-14",
+    "entities": ["Stackflow", "Gong", "product"]
+  },
+  {
+    "competitor_name": "Stackflow",
+    "signal_type": "pr",
+    "summary": "Stackflow was named a G2 Leader in Competitive Intelligence for Q1 2025, citing highest satisfaction scores among mid-market buyers.",
+    "event_date": "2025-03-20",
+    "entities": ["Stackflow", "G2 Leader", "Q1 2025"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "feature",
+    "summary": "NovaDeploy launched one-click deployment templates for CI pipelines, reducing setup time from hours to under 5 minutes for new users.",
+    "event_date": "2025-01-12",
+    "entities": ["NovaDeploy", "deployment templates", "CI"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "pricing",
+    "summary": "NovaDeploy introduced usage-based pricing at $0.008 per API call, replacing flat-rate tiers and directly targeting high-volume enterprise workloads.",
+    "event_date": "2025-01-19",
+    "entities": ["NovaDeploy", "usage-based pricing"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "hiring",
+    "summary": "NovaDeploy hired 8 DevRel engineers and launched a developer advocacy program, signaling a community-led growth strategy.",
+    "event_date": "2025-01-27",
+    "entities": ["NovaDeploy", "DevRel", "developer advocacy"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "messaging",
+    "summary": "NovaDeploy updated its positioning to 'Deploy AI agents in production in under 10 minutes', targeting time-to-value as the primary differentiator.",
+    "event_date": "2025-02-05",
+    "entities": ["NovaDeploy", "time-to-value", "AI agents"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "pr",
+    "summary": "NovaDeploy secured a $25M Series A led by a16z, with the round earmarked for infrastructure scaling and SOC 2 Type II certification.",
+    "event_date": "2025-02-12",
+    "entities": ["NovaDeploy", "Series A", "a16z", "SOC 2"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "feature",
+    "summary": "NovaDeploy released a real-time monitoring dashboard with anomaly detection alerts, directly competing with Datadog's AI observability layer.",
+    "event_date": "2025-02-20",
+    "entities": ["NovaDeploy", "monitoring", "Datadog"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "review",
+    "summary": "NovaDeploy's Product Hunt launch received 1,200 upvotes and 4.7-star average, with developers citing the fastest cold-start time in the category.",
     "event_date": "2025-02-28",
-    "entities": ["Microsoft", "Copilot", "Azure"]
+    "entities": ["NovaDeploy", "Product Hunt"]
   },
   {
-    "competitor_name": "NVIDIA",
-    "signal_type": "Strategic Investment",
-    "summary": "NVIDIA acquired a 15% stake in a specialized European photonics startup to accelerate chip-to-chip interconnect bandwidth.",
-    "event_date": "2025-03-12",
-    "entities": ["NVIDIA", "Photonics"]
+    "competitor_name": "NovaDeploy",
+    "signal_type": "hiring",
+    "summary": "NovaDeploy posted a Head of Security role and two senior compliance engineers, directly tied to their SOC 2 certification roadmap.",
+    "event_date": "2025-03-06",
+    "entities": ["NovaDeploy", "security", "SOC 2"]
   },
   {
-    "competitor_name": "Apple",
-    "signal_type": "Strategic Hire",
-    "summary": "Apple reportedly hired two top chip designers from ARM to lead development of its next-generation Silicon for AI data centers.",
-    "event_date": "2025-03-08",
-    "entities": ["Apple", "ARM", "Silicon"]
+    "competitor_name": "NovaDeploy",
+    "signal_type": "pricing",
+    "summary": "NovaDeploy launched a free tier capped at 10k API calls/month, aggressively targeting developer adoption before converting to paid plans.",
+    "event_date": "2025-03-13",
+    "entities": ["NovaDeploy", "free tier"]
+  },
+  {
+    "competitor_name": "NovaDeploy",
+    "signal_type": "messaging",
+    "summary": "NovaDeploy published a technical whitepaper comparing cold-start latency against three named competitors, using benchmarks as a sales tool.",
+    "event_date": "2025-03-19",
+    "entities": ["NovaDeploy", "whitepaper", "benchmarks"]
   }
 ]

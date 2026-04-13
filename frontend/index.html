@@ -69,15 +69,26 @@
             <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-muted)">search</span>
             <input id="headerSearchInput" class="topbar-search w-full pl-9 pr-4 py-2 rounded-xl text-sm" placeholder="Search signals..." type="text"/>
         </div>
-        <div class="flex items-center gap-3 ml-4">
-            <button class="p-2 rounded-lg transition-all" style="color:var(--text-secondary)" onmouseover="this.style.background='var(--surface-card-hover)'" onmouseout="this.style.background='transparent'">
+        <div class="flex items-center gap-3 ml-4 relative">
+            <button id="notificationsBtn" class="p-2 rounded-lg transition-all" type="button" style="color:var(--text-secondary)" onmouseover="this.style.background='var(--surface-card-hover)'" onmouseout="this.style.background='transparent'">
                 <span class="material-symbols-outlined text-[20px]">notifications</span>
             </button>
+            <div id="notificationsPanel" class="glass-card hidden absolute right-0 top-12 w-72 p-4 z-50">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-muted)">Notifications</p>
+                    <button type="button" class="text-xs font-semibold" style="color:var(--primary)" onclick="toggleNotifications()">Close</button>
+                </div>
+                <div id="notificationsList" class="space-y-3">
+                    <div class="p-3 rounded-xl" style="background:var(--surface-card);border:1px solid var(--border)">
+                        <p class="text-sm font-semibold" style="color:var(--text-primary)">No new notifications</p>
+                        <p class="text-xs mt-1" style="color:var(--text-secondary)">You're all caught up.</p>
+                    </div>
+                </div>
+            </div>
             <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-on-surface">Demo User</p>
-                    <p class="text-[10px] text-outline font-medium uppercase tracking-widest">Senior Analyst</p>
+                    <p class="text-xs font-bold text-on-surface">ARYA</p>
                 </div>
                 <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--surface-card);border:1px solid var(--border)">
                     <span class="material-symbols-outlined text-[18px]" style="color:var(--text-secondary)">person</span>
@@ -144,14 +155,14 @@
             </div>
 
             <!-- Chart + Alert -->
-            <div class="grid gap-4 mb-4" style="grid-template-columns:1fr 320px">
+            <div class="dashboard-main-layout grid gap-4 mb-4" style="grid-template-columns:minmax(0,2fr) minmax(280px,1fr)">
                 <div class="glass-card p-6" style="min-height:360px;display:flex;flex-direction:column">
                     <div class="flex items-center justify-between mb-4">
                         <div>
                             <h3 class="font-bold text-base" style="color:var(--text-primary)">Activity Timeline</h3>
                             <p class="text-xs mt-0.5" style="color:var(--text-secondary)">Signal frequency over time</p>
                         </div>
-                        <div class="flex gap-2" id="timeRangeBtns">
+                        <div class="flex" id="timeRangeBtns" style="gap:12px">
                             <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1D" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1D</button>
                             <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold" data-range="1W" style="background:rgba(114,47,55,0.2);border:1px solid rgba(114,47,55,0.4);color:#722F37">1W</button>
                             <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1M" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1M</button>
@@ -189,12 +200,12 @@
                     </div>
                     <div id="donutLegend" class="space-y-2 mt-2"></div>
                 </div>
-                <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                <div class="flex flex-col gap-6">
                     <div class="bg-surface-container-lowest p-6 rounded-xl shadow-lg border border-slate-100 flex-1 flex flex-col">
                         <div class="flex items-center gap-3 mb-6">
                             <span class="material-symbols-outlined text-error">campaign</span>
                             <h4 class="text-lg font-headline font-bold text-on-surface">Pattern Alerts</h4>
-                            <button class="ml-auto p-2 text-primary hover:bg-surface-container-low rounded-lg transition-all" onclick="updateDashboard()">
+                            <button id="dashboardRefreshBtn" class="ml-auto p-2 text-primary hover:bg-surface-container-low rounded-lg transition-all" type="button" onclick="refreshDashboard()">
                                 <span class="material-symbols-outlined text-sm">refresh</span>
                             </button>
                         </div>
@@ -210,14 +221,6 @@
                     <div id="competitorBars" class="space-y-3"></div>
                 </div>
 
-                <div class="glass-card p-6 flex flex-col items-center justify-center text-center">
-                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style="background:var(--surface-card)">
-                        <span class="material-symbols-outlined text-[28px]" style="color:var(--text-muted)">inventory_2</span>
-                    </div>
-                    <h4 class="font-bold text-sm mb-1" style="color:var(--text-primary)">No alerts detected</h4>
-                    <p class="text-xs leading-relaxed mb-5" style="color:var(--text-secondary)">No critical insights in the selected period.</p>
-                    <button onclick="app.updateDashboard()" class="btn-primary px-5 py-2.5 text-xs rounded-xl">Force Refresh</button>
-                </div>
             </div>
         </div>
 
@@ -256,18 +259,19 @@
             
             <div class="text-center space-y-6 mb-6 z-10" id="chat-welcome">
                 <div class="w-20 h-20 bg-surface-container-lowest rounded-3xl shadow-lg flex items-center justify-center mx-auto border border-white/50">
-                    <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                    <img src="logo.png" alt="CIA" style="width:40px;height:40px;object-fit:cover;border-radius:50%" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                    <span class="material-symbols-outlined text-white text-[20px]" style="display:none;font-variation-settings:'FILL' 1">shield_person</span>
                 </div>
                 <div>
                     <h2 class="font-headline text-4xl font-extrabold text-on-surface leading-tight">
-                        INTELLIGENCE <span class="text-primary-container">AGENT.</span>
+                        INTELLIGENCE <span class="text-primary-container">AGENT</span>
                     </h2>
                     <p class="font-body text-outline text-base max-w-lg mx-auto mt-2">
                         Ask a question to begin analysis
                     </p>
                 </div>
                 <h2 class="font-extrabold text-2xl tracking-tight mb-1" style="color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">
-                    READY FOR <span style="color:var(--primary)">INTERROGATION.</span>
+                    READY FOR <span style="color:var(--primary)">INTERROGATION</span>
                 </h2>
                 <p class="text-sm" style="color:var(--text-secondary)">Ask anything about competitors, pricing, or market trends.</p>
             </div>
@@ -275,6 +279,20 @@
             <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto"></div>
 
             <div id="chat-input-container" class="max-w-3xl w-full mx-auto mt-auto relative z-50 mb-2">
+                <div id="chatSuggestions" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <button type="button" class="glass-card p-4 text-left" onclick="sendSuggestion('What are the latest competitor pricing strategies?')">
+                        <p class="text-sm font-semibold" style="color:var(--text-primary)">What are the latest competitor pricing strategies?</p>
+                    </button>
+                    <button type="button" class="glass-card p-4 text-left" onclick="sendSuggestion('Show recent signals for major AI companies')">
+                        <p class="text-sm font-semibold" style="color:var(--text-primary)">Show recent signals for major AI companies</p>
+                    </button>
+                    <button type="button" class="glass-card p-4 text-left" onclick="sendSuggestion('What patterns are emerging in the market?')">
+                        <p class="text-sm font-semibold" style="color:var(--text-primary)">What patterns are emerging in the market?</p>
+                    </button>
+                    <button type="button" class="glass-card p-4 text-left" onclick="sendSuggestion('Give predictions for the next 30 days in this sector')">
+                        <p class="text-sm font-semibold" style="color:var(--text-primary)">Give predictions for the next 30 days in this sector</p>
+                    </button>
+                </div>
                 <div class="chat-box" id="chat-input-wrapper" style="position:relative; display:flex; flex-direction:column; width:100%; background:#F5E6C8; border-radius:12px; padding:10px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); border:1px solid rgba(120,60,20,0.2); overflow:hidden; transition:all 0.3s ease;">
                     
                     <!-- Mouse Glow Effect -->

@@ -9,6 +9,8 @@ const seedRouter   = require("./routes/seed");
 const resetRouter  = require("./routes/reset");
 const signalsRouter = require("./routes/signals");
 const analyticsRouter = require("./routes/analytics");
+const { getGroqClient, callGroq } = require("./lib/groq");
+const { getClient: getHindsightClient } = require("./lib/hindsight");
 
 // ─── Startup environment validation ───────────────────────────────────────────
 // Runs before Express starts. Any placeholder value will print a clear message
@@ -57,9 +59,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health route
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "CI Agent running", groq: "online", hindsight: "connected" });
+// Health route — real service pings
+app.get("/health", async (req, res) => {
+  let groqStatus      = "offline";
+  let hindsightStatus = "disconnected";
+
+  // Ping Groq with a minimal 1-token call
+  try {
+    await callGroq("Reply OK.", "OK", { max_completion_tokens: 1 }, 0);
+    groqStatus = "online";
+  } catch {
+    groqStatus = "offline";
+  }
+
+  // Ping Hindsight by initialising the client (validates credentials + URL)
+  try {
+    getHindsightClient();
+    hindsightStatus = "connected";
+  } catch {
+    hindsightStatus = "disconnected";
+  }
+
+  res.json({
+    status:    groqStatus === "online" && hindsightStatus === "connected" ? "ok" : "degraded",
+    message:   "CI Agent running",
+    groq:      groqStatus,
+    hindsight: hindsightStatus,
+  });
 });
 
 // Mount routes
@@ -73,8 +99,8 @@ app.use("/analytics", analyticsRouter);
 // Static frontend serving
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// Serve index.html for the root route
-app.get("/", (req, res) => {
+// Serve index.html for SPA routes
+app.get(["/", "/dashboard", "/chat", "/ingest", "/predictions", "/patterns", "/timeline", "/admin"], (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
@@ -91,6 +117,28 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`CI Agent backend running on http://localhost:${PORT}`);
+  try {
+    getGroqClient();
+    console.log("[Warmup] Groq client initialized.");
+  } catch (err) {
+    console.warn("[Warmup] Groq init failed:", err.message);
+  }
+
+  try {
+    getHindsightClient();
+    console.log("[Warmup] Hindsight client initialized.");
+  } catch (err) {
+    console.warn("[Warmup] Hindsight init failed:", err.message);
+  }
+
+  setTimeout(async () => {
+    try {
+      await callGroq("Reply with OK.", "OK", 0);
+      console.log("[Warmup] Groq model warmed.");
+    } catch (err) {
+      console.warn("[Warmup] Groq warmup failed:", err.message);
+    }
+  }, 0);
 });
 
 module.exports = app;
