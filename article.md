@@ -4,17 +4,18 @@ Every competitive intelligence tool I'd used before had the same flaw: ask it so
 
 That's fine for a search engine. It's not fine for an agent that's supposed to track competitor behavior over months.
 
-So I built one that actually remembers.
+So I built one that actually remembers — and one that reasons through a multi-agent pipeline instead of a single LLM call.
 
 ## What the System Does
 
-The Competitive Intelligence Agent monitors competitor signals — pricing changes, product launches, strategic hires, messaging shifts — and stores each one as a structured memory in [Hindsight](https://github.com/vectorize-io/hindsight). When you ask a question, it doesn't search the web. It recalls semantically relevant signals from that memory bank, injects them into a synthesis prompt, and returns a cited intelligence briefing.
+The Competitive Intelligence Agent monitors competitor signals — pricing changes, product launches, strategic hires, messaging shifts — and stores each one as a structured memory in [Hindsight](https://github.com/vectorize-io/hindsight). When you ask a question, it doesn't search the web. It recalls semantically relevant signals from that memory bank, routes them through four specialized agents running in parallel, and returns a cited intelligence briefing.
 
-The architecture is three stages:
+The architecture is four stages:
 
 1. **Ingest** — raw text in, structured signal out, written to Hindsight
-2. **Recall** — natural language question in, top-N relevant signals out
-3. **Synthesize** — signals + question in, cited executive briefing out
+2. **Recall** — natural language question in, 10–15 high-confidence signals out
+3. **Multi-Agent Analysis** — four specialized agents process signal clusters in parallel
+4. **Synthesize** — agent findings + signals in, cited executive briefing out
 
 There's also a feedback loop: every Q&A pair gets written back to Hindsight as a new signal. Future queries benefit from the reasoning of past queries. The system compounds.
 
@@ -24,7 +25,7 @@ The stack is Node.js and Express on the backend, vanilla JS on the frontend, [Gr
 
 The decision that shaped everything else was treating memory as the foundation, not a feature.
 
-Early on I considered building a custom vector store with Pinecone. The math looked fine — simpler operations, direct control. But I kept running into the same problem: I was spending engineering time on infrastructure that had nothing to do with competitive intelligence. Embedding management, index tuning, reranking — none of that was the product.
+Early on I considered building a custom vector store. The math looked fine — simpler operations, direct control. But I kept running into the same problem: I was spending engineering time on infrastructure that had nothing to do with competitive intelligence. Embedding management, index tuning, reranking — none of that was the product.
 
 I needed a way to give my [agent memory](https://vectorize.io/what-is-agent-memory) without building the memory system myself. I decided to try [Hindsight](https://github.com/vectorize-io/hindsight) because it's purpose-built for exactly this: agents that need to store structured facts, recall them by semantic meaning, and learn from repeated interactions.
 
@@ -42,6 +43,7 @@ async function writeSignal(signal) {
     event_date:      signal.event_date  || '',
     entities:        (signal.entities   || []).join(', '),
     stored_at:       signal.stored_at   || new Date().toISOString(),
+    source:          signal.source      || 'signal',
   };
   return await hindsight.retain(BANK_ID, content, {
     metadata,
@@ -50,19 +52,17 @@ async function writeSignal(signal) {
   });
 }
 
-async function recallSignals(query, topK = 5) {
+async function recallSignals(query, topK = 12, excludeFeedback = true) {
   const hindsight = getClient();
-  const result = await hindsight.recall(BANK_ID, query, {
-    budget: topK > 10 ? "high" : "mid",
-  });
-  if (Array.isArray(result))                    return result;
-  if (result && Array.isArray(result.memories)) return result.memories;
-  if (result && Array.isArray(result.results))  return result.results;
-  return [];
+  // Budget scales with topK: >10 → "high", >5 → "mid", else → "low"
+  const budget = topK > 10 ? "high" : topK > 5 ? "mid" : "low";
+  const result = await hindsight.recall(BANK_ID, query, { budget, top_k: topK });
+  // ... normalize result shape, filter feedback signals
+  return signals.slice(0, topK);
 }
 ```
 
-No embedding logic. No index management. No reranking code. Hindsight abstracts all of it. I write structured data and query by semantic meaning.
+No embedding logic. No index management. No reranking code. Hindsight abstracts all of it. I write structured data and query by semantic meaning. The `budget` parameter is important: the query pipeline requests `topK = 15` with `budget: "high"` to give the multi-agent system enough signal coverage, while analytics endpoints use `topK = 12` or `15` with `budget: "mid"` for a faster, balanced sweep.
 
 ## Ingestion: Where Signal Quality Is Decided
 
@@ -73,12 +73,10 @@ The tricky part was that Groq doesn't always return clean JSON. It sometimes wra
 ```javascript
 // backend/routes/ingest.js
 
-let cleanedJson = rawResponse.trim();
+let cleanedJson = rawResponse.trim()
+  .replace(/<think>[\s\S]*?<\/think>/gi, '')
+  .trim();
 
-// Remove <think> blocks from reasoning models
-cleanedJson = cleanedJson.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-
-// Strip markdown code fences
 if (cleanedJson.startsWith('```')) {
   cleanedJson = cleanedJson
     .replace(/^```(?:json)?\s*/i, '')
@@ -86,85 +84,102 @@ if (cleanedJson.startsWith('```')) {
     .trim();
 }
 
-// Extract JSON object by finding first { and last }
 const jsonStart = cleanedJson.indexOf('{');
 const jsonEnd   = cleanedJson.lastIndexOf('}');
 cleanedJson = cleanedJson.slice(jsonStart, jsonEnd + 1);
 ```
 
-Then strict validation before anything touches memory:
-
-```javascript
-const VALID_SIGNAL_TYPES = ["pricing", "feature", "hiring", "messaging", "pr", "review"];
-
-if (!signal.competitor_name || typeof signal.competitor_name !== "string") {
-  return res.status(422).json({ error: "Extracted signal is missing 'competitor_name'." });
-}
-if (!signal.signal_type || !VALID_SIGNAL_TYPES.includes(signal.signal_type)) {
-  return res.status(422).json({ error: `Invalid signal_type.` });
-}
-if (!signal.summary || typeof signal.summary !== "string") {
-  return res.status(422).json({ error: "Extracted signal is missing 'summary'." });
-}
-```
+Then strict validation before anything touches memory. The ingest route also normalizes free-text signal type variants from the LLM — "strategic hire" → `hiring`, "market expansion" → `pr`, "product launch" → `feature` — via a `TYPE_ALIASES` map, so the memory bank stays clean even when the model is creative with its vocabulary.
 
 One bad extraction in memory creates noise that every future query has to filter through. The validation is strict because garbage in means garbage reasoning out.
 
-## Query: Recall, Synthesize, Cite
+## The Multi-Agent Pipeline: Four Specialists, One Answer
 
-When a question comes in, the query route recalls the top 50 relevant signals from Hindsight and passes them to Groq with a synthesis prompt that forces citations:
+The most architecturally significant part of the system is the query pipeline. Rather than passing all recalled signals to a single LLM call, the system routes them through four specialized agents that run in parallel.
+
+### Signal Clustering
+
+When a question arrives, the system recalls 10–15 high-confidence signals from Hindsight and clusters them by type:
 
 ```javascript
-// backend/prompts/synthesise.js
+// backend/routes/query.js
 
-const SYNTHESISE_SYSTEM = `You are a Senior Strategic Intelligence Analyst.
+const RECALL_LIMIT = 15; // 4 agents × up to 4 signals each, with redistribution headroom
 
-Your task is to provide an executive-level intelligence briefing based on the provided memory signals.
-
-CRITICAL INSTRUCTIONS:
-1. AUTHORITATIVE & CONFIDENT TONE: Use precise, professional language. Eliminate hedging.
-2. COMPANY CENTRIC: Every answer MUST explicitly mention the company name being discussed.
-3. CITATIONS: Use [Type, Date] for analytical claims based on memory.
-   Example: "Tesla is pivoting to cost-leader strategy [Pricing, 2025-03-01]."`;
+const AGENT_BUCKETS = {
+  pricing:   ["pricing"],
+  hiring:    ["hiring"],
+  feature:   ["feature"],
+  expansion: ["pr", "messaging", "review", "general"],
+};
 ```
 
-The result is answers that look like this:
+Each bucket is sorted by recency and capped at 4 signals per agent. If any bucket falls below 2 signals, a redistribution pass fills it from unassigned signals — so every agent has meaningful input without duplication.
 
-> **EXECUTIVE SUMMARY**: Tesla is executing a deliberate cost-leadership pivot in key EV markets.
->
-> **STRATEGIC ANALYSIS**: Tesla reduced Model Y pricing by 8% across China and Germany [Pricing Shift, 2025-03-01], a direct response to BYD's aggressive market share expansion. This signals a shift away from premium positioning toward volume defense in price-sensitive markets.
->
-> **RISK ASSESSMENT**: Margin compression is the immediate risk. The move likely pressures European OEMs to respond with their own pricing adjustments within 60–90 days.
+### Parallel Execution
 
-Every claim is grounded in a stored signal. Every date is real. The answer has authority because the memory provides concrete facts to reason over.
+All four agents fire simultaneously via `Promise.all`:
+
+```javascript
+const [pricingOut, hiringOut, featureOut, expansionOut] = await Promise.all([
+  runAgent("pricing",   buckets.pricing,   question),
+  runAgent("hiring",    buckets.hiring,    question),
+  runAgent("feature",   buckets.feature,   question),
+  runAgent("expansion", buckets.expansion, question),
+]);
+```
+
+Each agent receives only its relevant signals and returns a 1–2 sentence finding with a 120-token cap and an 8-second timeout. No agent blocks another.
+
+### Synthesis
+
+The four agent outputs are prepended to a structured synthesis prompt and streamed through Groq's API. The synthesis layer sees both the raw signals (grouped by type) and the agent findings, producing a four-section intelligence brief: SUMMARY, KEY MOVES, STRATEGIC IMPACT, and RECOMMENDATION — each under 160 words total, with inline citations like `[pricing, 2025-01]`.
+
+Pattern queries — questions containing keywords like "trend", "recurring", "predict", or "history" — bypass the multi-agent pipeline and route directly to a dedicated pattern prompt that identifies recurring competitor behaviors across the full signal set.
+
+## Streaming: Why It Matters for Perceived Performance
+
+The query endpoint streams responses over NDJSON. Headers are flushed immediately, so the client unblocks the moment the request is accepted — before any LLM call completes. The frontend renders tokens as they arrive.
+
+```javascript
+// POST /query/stream
+res.writeHead(200, {
+  "Content-Type":    "application/x-ndjson; charset=utf-8",
+  "Cache-Control":   "no-cache, no-transform",
+  "Connection":      "keep-alive",
+  "X-Accel-Buffering": "no",
+});
+res.flushHeaders?.();
+writeStreamEvent(res, { type: "status", content: "Analyzing intelligence signals..." });
+```
+
+A 14-second global failsafe ensures the connection always closes cleanly. Repeated queries are served from an in-memory cache (5-minute TTL, 50-entry LRU) with zero LLM calls. In practice, responses feel near-instant for cached queries and stream within 2 seconds for new ones.
 
 ## What Surprised Me: Patterns Emerge Without Being Programmed
 
-The most unexpected behavior was pattern detection. I didn't build a dedicated pattern engine. I just asked the synthesis prompt to reason over 50 signals at once with a question like:
+The most unexpected behavior was pattern detection. The system detects pattern-intent queries automatically using keyword matching (`isPatternQuery`), then routes them to a dedicated prompt that reasons across the full recalled signal set:
 
 ```
-What patterns do you see in how big tech is positioning for AI dominance?
+What patterns do you see in how competitors are approaching enterprise pricing?
 ```
 
-And it returned:
+Returns:
 
-> **PATTERN FOUND**: Multiple companies are simultaneously investing in custom silicon, enterprise AI integration, and regional infrastructure expansion — suggesting a coordinated market shift rather than isolated product decisions.
+> PATTERN: All three tracked competitors executed pricing changes within 60 days of a major product launch — Meridian AI cut Pro tier pricing [pricing, 2025-01-08] before shipping its ingestion API [feature, 2025-02-25], Stackflow raised Starter pricing [pricing, 2025-01-10] ahead of its Salesforce native app [feature, 2025-02-22], and NovaDeploy introduced usage-based pricing [pricing, 2025-01-19] before its monitoring dashboard launch [feature, 2025-02-20].
 >
-> **EVIDENCE**: Google TPU v6 cluster expansion in EMEA [Market Expansion, 2025-03-05]. Microsoft Copilot enterprise revenue uplift [Product Update, 2025-02-28]. NVIDIA photonics acquisition for chip interconnects [Strategic Investment, 2025-03-12].
->
-> **PREDICTION**: Companies without a custom silicon or enterprise AI story will face significant positioning pressure in H2 2025.
+> PREDICTION: Expect another pricing move from at least one competitor within 30 days of their next feature announcement.
 
-That pattern wasn't in any single signal. It emerged from temporal analysis across accumulated history. This is what happens when you give an AI system real [agent memory](https://vectorize.io/what-is-agent-memory) — not just retrieval, but the ability to reason across everything it knows.
+That pattern wasn't in any single signal. It emerged from temporal analysis across 30 structured signals spanning three competitors. This is what happens when you give an AI system real [agent memory](https://vectorize.io/what-is-agent-memory) — not just retrieval, but the ability to reason across everything it knows.
 
 ## Lessons Learned
 
 **Memory architecture is not about databases — it's about how you think about the system.** Once I stopped treating Hindsight as a storage layer to optimize around and started designing everything to leverage semantic recall, the whole system became cleaner. The API routes are simple because they do one thing: move data into or out of the memory bank.
 
-**Strict schema discipline compounds over time.** Enforcing `signal_type`, `competitor_name`, `event_date`, `summary`, and `entities` on every signal costs nothing upfront. It becomes invaluable when you have hundreds of signals and need to reason about temporal patterns or filter by company. Bad structure early creates friction at scale.
+**Limiting recall to 10–15 signals is a feature, not a constraint.** Early versions tried to pass every available signal to the LLM. Response quality degraded — too much noise, too little focus. Capping at 15 signals with recency sorting and semantic relevance ranking produces sharper, more actionable answers. The multi-agent clustering amplifies this: each agent sees only the signals most relevant to its domain.
 
-**Groq error handling is not optional.** The system calls Groq twice per request — once for extraction, once for synthesis. Rate limits and malformed responses happen. Exponential backoff with three retry attempts (`[1000, 2000, 4000]ms`) made the system stable under real load. Without it, a single timeout would surface as a user-facing error.
+**Strict schema discipline compounds over time.** Enforcing `signal_type`, `competitor_name`, `event_date`, `summary`, and `entities` on every signal costs nothing upfront. It becomes invaluable when you have 30+ signals and need to reason about temporal patterns or filter by company. Bad structure early creates friction at scale.
 
-**The fallback prompt is a double-edged sword.** The query route includes a fallback that generates a strategic analysis from general knowledge when memory signals are sparse. This makes the system feel confident even with thin data — but it also means you can't easily tell when the agent is reasoning from memory versus making educated guesses. For a production system, that distinction needs to be explicit in the UI.
+**Parallel agents beat sequential reasoning for breadth.** A single LLM call over mixed signals tends to over-index on the most prominent signal type. Running four specialized agents in parallel and synthesizing their outputs produces more balanced coverage — pricing trends don't crowd out hiring signals, and expansion moves don't get buried under feature announcements.
 
 **Real-time ingestion changes user behavior.** Once users could ingest a signal and immediately ask about it in the same session, they started treating the system differently — less like a search tool, more like a briefing partner they were actively feeding information. That behavioral shift was not something I anticipated, and it's the most interesting product insight from building this.
 

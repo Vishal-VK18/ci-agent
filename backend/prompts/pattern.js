@@ -17,7 +17,6 @@ Rules:
 function buildPatternPrompt(signals, question) {
   // Use all signals passed in (caller already capped at RECALL_LIMIT)
   const formattedSignals = signals
-    .slice(0, 10)
     .map((s, i) => {
       const content    = (s.content || s.text || JSON.stringify(s)).slice(0, 130);
       const meta       = s.metadata || {};

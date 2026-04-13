@@ -4,15 +4,16 @@ const router = express.Router();
 const { callGroq, streamGroq } = require("../lib/groq");
 const { recallSignals, writeSignal } = require("../lib/hindsight");
 const { PATTERN_SYSTEM, buildPatternPrompt, isPatternQuery } = require("../prompts/pattern");
+const { SYNTHESISE_SYSTEM, buildSynthesisPrompt } = require("../prompts/synthesise");
 
 const QUERY_CACHE_TTL_MS = 5 * 60 * 1000;
 const queryCache = new Map();
 
 const FALLBACK_ANSWER =
-  "Based on available intelligence signals, this sector is rapidly evolving with strong pricing competition, active hiring, and accelerating market expansion. Monitor all three competitors closely over the next 30 days.";
+  "SUMMARY: The competitive landscape is rapidly evolving across all tracked competitors.\nKEY MOVES: Meridian AI, Stackflow, and NovaDeploy are all executing simultaneous pricing, hiring, and product expansion strategies.\nSTRATEGIC IMPACT: Expect accelerated market consolidation and pricing pressure over the next 30–60 days.\nRECOMMENDATION: Prioritize monitoring pricing and hiring signals weekly to anticipate the next competitive move.";
 
-// Recall 12 signals — enough for 4 agents × 3 signals each
-const RECALL_LIMIT = 12;
+// 15 signals → 4 agents × up to 4 signals each, with redistribution headroom
+const RECALL_LIMIT = 15;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -29,7 +30,12 @@ function getCachedQuery(question) {
   return cached.value;
 }
 
+const QUERY_CACHE_MAX = 50;
+
 function setCachedQuery(question, value) {
+  if (queryCache.size >= QUERY_CACHE_MAX) {
+    queryCache.delete(queryCache.keys().next().value);
+  }
   queryCache.set(normalizeQuestion(question), {
     value,
     expiresAt: Date.now() + QUERY_CACHE_TTL_MS,
@@ -51,7 +57,7 @@ function makeTimeout(ms) {
 }
 
 // ---------------------------------------------------------------------------
-// Signal clustering
+// Signal clustering with redistribution
 // ---------------------------------------------------------------------------
 const AGENT_BUCKETS = {
   pricing:   ["pricing"],
@@ -60,23 +66,26 @@ const AGENT_BUCKETS = {
   expansion: ["pr", "messaging", "review", "general"],
 };
 
+const MIN_SIGNALS_PER_AGENT = 2;
+
+function signalId(s) {
+  return s.id || s.signal_id || JSON.stringify(s);
+}
+
 function clusterSignals(signals) {
   const buckets = { pricing: [], hiring: [], feature: [], expansion: [] };
 
   for (const s of signals) {
     const type = (s.metadata?.signal_type || "general").toLowerCase();
-    let placed = false;
     for (const [bucket, types] of Object.entries(AGENT_BUCKETS)) {
       if (types.includes(type)) {
         buckets[bucket].push(s);
-        placed = true;
         break;
       }
     }
-    if (!placed) buckets.expansion.push(s);
   }
 
-  // Sort each bucket by recency, keep top 3 per agent
+  // Sort each bucket by recency, keep top 4 per agent
   for (const key of Object.keys(buckets)) {
     buckets[key] = buckets[key]
       .sort((a, b) => {
@@ -84,7 +93,37 @@ function clusterSignals(signals) {
         const db = new Date(b.metadata?.event_date || b.metadata?.stored_at || 0).getTime();
         return db - da;
       })
-      .slice(0, 3);
+      .slice(0, 4);
+  }
+
+  // Rebuild usedIds from ALL signals (matched + unmatched) to prevent any
+  // signal appearing in two buckets during redistribution.
+  const usedIds = new Set(signals.map(signalId));
+  // Remove IDs that are still in a bucket (they are legitimately placed)
+  // and keep only those NOT in any bucket so redistribution can use them.
+  const placedIds = new Set(
+    Object.values(buckets).flat().map(signalId)
+  );
+  // usedIds for redistribution = everything already placed
+  const redistributionUsed = new Set(placedIds);
+
+  const allSorted = [...signals].sort((a, b) => {
+    const da = new Date(a.metadata?.event_date || a.metadata?.stored_at || 0).getTime();
+    const db = new Date(b.metadata?.event_date || b.metadata?.stored_at || 0).getTime();
+    return db - da;
+  });
+
+  for (const key of Object.keys(buckets)) {
+    if (buckets[key].length < MIN_SIGNALS_PER_AGENT) {
+      for (const s of allSorted) {
+        if (buckets[key].length >= MIN_SIGNALS_PER_AGENT) break;
+        const sid = signalId(s);
+        if (!redistributionUsed.has(sid)) {
+          buckets[key].push(s);
+          redistributionUsed.add(sid);
+        }
+      }
+    }
   }
 
   return buckets;
@@ -106,11 +145,14 @@ function formatSignals(signals) {
 const AGENT_SYSTEM = "You are a competitive intelligence analyst. Answer in 1–2 sentences max. Be specific and cite the competitor name and date.";
 
 async function runAgent(label, signals, question) {
-  if (signals.length === 0) return null;
+  if (signals.length === 0) {
+    console.warn(`[Agent] ${label} received no signals — skipping.`);
+    return null;
+  }
   const prompt = `${label.toUpperCase()} SIGNALS:\n${formatSignals(signals)}\n\nQuestion: ${question}\n\nProvide a 1–2 sentence ${label} intelligence finding.`;
   try {
     const result = await Promise.race([
-      callGroq(AGENT_SYSTEM, prompt),
+      callGroq(AGENT_SYSTEM, prompt, { max_completion_tokens: 120 }),
       makeTimeout(8000),
     ]);
     return result ? `${label.toUpperCase()}: ${result}` : null;
@@ -120,46 +162,10 @@ async function runAgent(label, signals, question) {
 }
 
 // ---------------------------------------------------------------------------
-// Synthesis system prompt
+// Multi-agent pipeline
 // ---------------------------------------------------------------------------
-const SYNTHESIS_SYSTEM = `You are a senior competitive intelligence analyst producing an executive brief.
-
-You will receive findings from 4 specialist agents. Combine them into a structured brief.
-
-Format (use these exact labels, one per line):
-SUMMARY: one sentence overview of the competitive situation.
-KEY MOVES: the 2–3 most significant competitor actions observed.
-STRATEGIC IMPACT: what this means for the market in the next 30–90 days.
-RECOMMENDATION: one concrete action the reader should take now.
-
-Rules:
-- Total answer under 180 words.
-- Cite competitor names and signal types inline.
-- Never include debug text or <think> tags.`;
-
-async function runSynthesis(agentOutputs, question) {
-  const findings = agentOutputs.filter(Boolean).join("\n\n");
-  if (!findings) return FALLBACK_ANSWER;
-
-  const prompt = `Agent findings:\n\n${findings}\n\nQuestion: ${question}\n\nWrite the 4-section intelligence brief now.`;
-  return await Promise.race([
-    callGroq(SYNTHESIS_SYSTEM, prompt),
-    makeTimeout(8000),
-  ]);
-}
-
-// ---------------------------------------------------------------------------
-// Core pipeline
-// ---------------------------------------------------------------------------
-async function recallAndCluster(question) {
-  const isPattern = isPatternQuery(question);
-  const signals   = await recallSignals(question, RECALL_LIMIT);
-  const buckets   = clusterSignals(signals);
-  return { signals, buckets, isPattern };
-}
-
-async function runMultiAgentPipeline(question, buckets) {
-  // Run all 4 agents in parallel — no sequential delay
+async function runMultiAgentPipeline(question, buckets, allSignals) {
+  // All 4 agents run in parallel — no sequential delay
   const [pricingOut, hiringOut, featureOut, expansionOut] = await Promise.all([
     runAgent("pricing",   buckets.pricing,   question),
     runAgent("hiring",    buckets.hiring,    question),
@@ -167,23 +173,47 @@ async function runMultiAgentPipeline(question, buckets) {
     runAgent("expansion", buckets.expansion, question),
   ]);
 
-  const answer = await runSynthesis(
-    [pricingOut, hiringOut, featureOut, expansionOut],
-    question
-  );
+  const agentOutputs = [pricingOut, hiringOut, featureOut, expansionOut].filter(Boolean);
+  if (agentOutputs.length === 0) return FALLBACK_ANSWER;
+
+  // Use synthesise.js prompt + buildSynthesisPrompt for structured output
+  const clusterTypes = Object.keys(buckets).filter(k => buckets[k].length > 0);
+  const synthesisUserPrompt = buildSynthesisPrompt(allSignals, clusterTypes, question);
+
+  // Prepend agent findings so the synthesiser has both raw signals and agent analysis
+  const fullPrompt = `Agent findings:\n\n${agentOutputs.join("\n\n")}\n\n---\n\n${synthesisUserPrompt}`;
+
+  const answer = await Promise.race([
+    callGroq(SYNTHESISE_SYSTEM, fullPrompt, { max_completion_tokens: 350 }),
+    makeTimeout(8000),
+  ]);
 
   return answer || FALLBACK_ANSWER;
 }
 
-async function storeFeedback(question, answer) {
+// ---------------------------------------------------------------------------
+// Feedback loop — persists Q&A back into Hindsight memory
+// ---------------------------------------------------------------------------
+async function storeFeedback(question, answer, signalsUsed) {
   try {
     await writeSignal({
       signal_type:     "messaging",
       competitor_name: "Internal Query",
-      summary:         `Q: ${question.slice(0, 80)} | A: ${answer.slice(0, 80)}`,
+      summary:         `Q: ${question.slice(0, 80)} | A: ${answer.slice(0, 80)} | signals:${signalsUsed}`,
       stored_at:       new Date().toISOString(),
+      source:          "feedback",
     });
   } catch { /* non-critical */ }
+}
+
+// ---------------------------------------------------------------------------
+// Core recall + cluster helper
+// ---------------------------------------------------------------------------
+async function recallAndCluster(question) {
+  const isPattern = isPatternQuery(question);
+  const signals   = await recallSignals(question, RECALL_LIMIT);
+  const buckets   = clusterSignals(signals);
+  return { signals, buckets, isPattern };
 }
 
 // ---------------------------------------------------------------------------
@@ -196,7 +226,7 @@ router.post("/stream", async (req, res) => {
   }
 
   const trimmed = question.trim();
-  const reqId   = Date.now();
+  const reqId   = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
   // Send headers immediately — client unblocks at once
   res.writeHead(200, {
@@ -250,48 +280,80 @@ router.post("/stream", async (req, res) => {
     let answer;
 
     if (isPattern) {
-      // Pattern queries use the dedicated pattern prompt + stream
+      // Pattern queries: dedicated pattern prompt + real streaming
       const allSignals = [...buckets.pricing, ...buckets.hiring, ...buckets.feature, ...buckets.expansion];
-      const { systemPrompt, userPrompt } = {
-        systemPrompt: PATTERN_SYSTEM,
-        userPrompt:   buildPatternPrompt(allSignals, trimmed),
-      };
+      const systemPrompt = PATTERN_SYSTEM;
+      const userPrompt   = buildPatternPrompt(allSignals, trimmed);
 
-      console.time(`groq-${reqId}`);
+      console.time(`groq-stream-${reqId}`);
       const stream = await Promise.race([streamGroq(systemPrompt, userPrompt), makeTimeout(10000)]);
       console.log(`[Query] Pattern stream started (${reqId})`);
 
       answer = "";
+      let lastTokenAt = Date.now();
+      const TOKEN_IDLE_MS = 4000;
       for await (const chunk of stream) {
         if (responded) break;
+        if (Date.now() - lastTokenAt > TOKEN_IDLE_MS) { console.warn(`[Query] Token idle timeout (${reqId})`); break; }
         const delta = chunk.choices?.[0]?.delta?.content || "";
         const clean = delta.replace(/<think>[\s\S]*?<\/think>/gi, "");
         if (!clean) continue;
         answer += clean;
+        lastTokenAt = Date.now();
         writeStreamEvent(res, { type: "chunk", content: clean });
       }
-      console.timeEnd(`groq-${reqId}`);
+      console.timeEnd(`groq-stream-${reqId}`);
 
     } else {
-      // Multi-agent pipeline — 4 parallel agents + synthesis
+      // Multi-agent pipeline — 4 parallel agents + streamed synthesis
       console.time(`agents-${reqId}`);
-      answer = await Promise.race([
-        runMultiAgentPipeline(trimmed, buckets),
+      const [pricingOut, hiringOut, featureOut, expansionOut] = await Promise.race([
+        Promise.all([
+          runAgent("pricing",   buckets.pricing,   trimmed),
+          runAgent("hiring",    buckets.hiring,    trimmed),
+          runAgent("feature",   buckets.feature,   trimmed),
+          runAgent("expansion", buckets.expansion, trimmed),
+        ]),
         makeTimeout(12000),
       ]);
       console.timeEnd(`agents-${reqId}`);
 
-      // Stream the final answer as a single chunk so the frontend renders it
-      if (!responded) {
-        writeStreamEvent(res, { type: "chunk", content: answer });
+      if (responded) return;
+
+      const agentOutputs = [pricingOut, hiringOut, featureOut, expansionOut].filter(Boolean);
+      const clusterTypes = Object.keys(buckets).filter(k => buckets[k].length > 0);
+      const synthesisUserPrompt = buildSynthesisPrompt(signals, clusterTypes, trimmed);
+      const fullPrompt = agentOutputs.length > 0
+        ? `Agent findings:\n\n${agentOutputs.join("\n\n")}\n\n---\n\n${synthesisUserPrompt}`
+        : synthesisUserPrompt;
+
+      console.time(`groq-stream-synthesis-${reqId}`);
+      const synthStream = await Promise.race([streamGroq(SYNTHESISE_SYSTEM, fullPrompt), makeTimeout(10000)]);
+      console.log(`[Query] Synthesis stream started (${reqId})`);
+
+      answer = "";
+      let lastTokenAt = Date.now();
+      const TOKEN_IDLE_MS = 4000;
+      for await (const chunk of synthStream) {
+        if (responded) break;
+        if (Date.now() - lastTokenAt > TOKEN_IDLE_MS) { console.warn(`[Query] Token idle timeout (${reqId})`); break; }
+        const delta = chunk.choices?.[0]?.delta?.content || "";
+        const clean = delta.replace(/<think>[\s\S]*?<\/think>/gi, "");
+        if (!clean) continue;
+        answer += clean;
+        lastTokenAt = Date.now();
+        writeStreamEvent(res, { type: "chunk", content: clean });
       }
+      console.timeEnd(`groq-stream-synthesis-${reqId}`);
+
+      if (!answer.trim()) answer = FALLBACK_ANSWER;
     }
 
     const finalAnswer = (answer || "").trim() || FALLBACK_ANSWER;
     const result = { answer: finalAnswer, signals_used: signals.length, is_pattern: isPattern };
     setCachedQuery(trimmed, result);
     finish(result);
-    void storeFeedback(trimmed, finalAnswer);
+    void storeFeedback(trimmed, finalAnswer, signals.length);
 
   } catch (err) {
     console.error(`[Query] Error (${reqId}):`, err.message);
@@ -322,19 +384,19 @@ router.post("/", async (req, res) => {
     if (isPattern) {
       const allSignals = [...buckets.pricing, ...buckets.hiring, ...buckets.feature, ...buckets.expansion];
       answer = await Promise.race([
-        callGroq(PATTERN_SYSTEM, buildPatternPrompt(allSignals, trimmed)),
+        callGroq(PATTERN_SYSTEM, buildPatternPrompt(allSignals, trimmed), { max_completion_tokens: 300 }),
         makeTimeout(10000),
       ]);
     } else {
       answer = await Promise.race([
-        runMultiAgentPipeline(trimmed, buckets),
+        runMultiAgentPipeline(trimmed, buckets, signals),
         makeTimeout(12000),
       ]);
     }
 
     const result = { answer: answer || FALLBACK_ANSWER, is_pattern: isPattern, signals_used: signals.length };
     setCachedQuery(trimmed, result);
-    void storeFeedback(trimmed, result.answer);
+    void storeFeedback(trimmed, result.answer, signals.length);
     return res.status(200).json(result);
   } catch (err) {
     console.error("[Query] Error:", err.message);

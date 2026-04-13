@@ -1,7 +1,7 @@
 const Groq = require("groq-sdk");
 
 let groqClient = null;
-const FAST_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const FAST_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
 const DEFAULT_OPTIONS = {
   model:                FAST_MODEL,
@@ -72,17 +72,30 @@ async function callGroq(systemPrompt, userPrompt, overrides = {}, retries = 1) {
   }
 }
 
-async function streamGroq(systemPrompt, userPrompt) {
+async function streamGroq(systemPrompt, userPrompt, timeoutMs = 12000) {
   const groq = getGroqClient();
-  const stream = await groq.chat.completions.create({
-    ...DEFAULT_OPTIONS,
-    stream: true,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user",   content: userPrompt },
-    ],
-  });
-  return stream;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const stream = await groq.chat.completions.create(
+      {
+        ...DEFAULT_OPTIONS,
+        stream: true,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user",   content: userPrompt },
+        ],
+      },
+      { signal: controller.signal }
+    );
+    // Clear the connection-setup timer; the caller owns the stream from here
+    clearTimeout(timer);
+    return stream;
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
 }
 
 module.exports = { callGroq, streamGroq, getGroqClient };
