@@ -37,6 +37,18 @@
                 <span class="material-symbols-outlined text-[20px]">sensors</span>
                 <span class="font-semibold text-sm">Ingest Signal</span>
             </button>
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3" data-page="predictionsPage" onclick="showPage('predictionsPage')">
+                <span class="material-symbols-outlined text-[20px]">online_prediction</span>
+                <span class="font-semibold text-sm">Predictions</span>
+            </button>
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3" data-page="patternsPage" onclick="showPage('patternsPage')">
+                <span class="material-symbols-outlined text-[20px]">hub</span>
+                <span class="font-semibold text-sm">Patterns</span>
+            </button>
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3" data-page="timelinePage" onclick="showPage('timelinePage')">
+                <span class="material-symbols-outlined text-[20px]">timeline</span>
+                <span class="font-semibold text-sm">Timeline</span>
+            </button>
         </nav>
 
         <div class="p-3 mt-auto" style="border-top:1px solid var(--border)">
@@ -115,7 +127,7 @@
                     <div class="stat-label" style="color:rgba(42,13,16,0.5)">Confidence Score</div>
                     <div class="stat-value" style="color:#2a0d10" id="stat-confidence">94%</div>
                     <div style="height:3px;background:rgba(114,47,55,0.15);border-radius:4px;margin-top:12px">
-                        <div style="width:94%;height:100%;background:#a07830;border-radius:4px"></div>
+                        <div id="stat-confidence-bar" style="width:94%;height:100%;background:#a07830;border-radius:4px;transition:width 0.5s ease"></div>
                     </div>
                 </div>
 
@@ -208,6 +220,33 @@
             </div>
         </div>
 
+        <!-- TIMELINE PAGE -->
+        <div id="timelinePage" class="page hidden px-6 py-8">
+            <div class="mb-8">
+                <h1 class="font-bold tracking-tight mb-1" style="font-size:2rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">Activity Timeline</h1>
+                <p class="text-sm" style="color:var(--text-secondary)">Chronological feed of competitor signals.</p>
+            </div>
+            <div id="timelineContainer" class="space-y-4 max-w-4xl"></div>
+        </div>
+
+        <!-- PATTERNS PAGE -->
+        <div id="patternsPage" class="page hidden px-6 py-8">
+            <div class="mb-8">
+                <h1 class="font-bold tracking-tight mb-1" style="font-size:2rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">Strategic Patterns</h1>
+                <p class="text-sm" style="color:var(--text-secondary)">Detected clusters and recurrent strategies.</p>
+            </div>
+            <div id="patternsContainer" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+        </div>
+
+        <!-- PREDICTIONS PAGE -->
+        <div id="predictionsPage" class="page hidden px-6 py-8">
+            <div class="mb-8">
+                <h1 class="font-bold tracking-tight mb-1" style="font-size:2rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">Predictive Insights</h1>
+                <p class="text-sm" style="color:var(--text-secondary)">Forecasted moves based on historical signals.</p>
+            </div>
+            <div id="predictionsContainer" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+        </div>
+
         <!-- CHAT PAGE -->
         <div id="chatPage" class="page hidden px-6 py-8 flex flex-col" style="height:calc(100vh - 56px)">
             <div class="text-center mb-6" id="chat-welcome">
@@ -223,13 +262,24 @@
 
             <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto"></div>
 
-            <div class="max-w-3xl w-full mx-auto mt-auto">
-                <div class="chat-input-wrap flex items-center gap-3 p-2 pl-5">
-                    <span class="material-symbols-outlined text-[20px]" style="color:var(--text-muted)">psychology</span>
-                    <input id="chatInput" class="chat-input flex-1 py-3 text-sm" placeholder="Ask about competitors, price changes, or trends..." type="text" autocomplete="off"/>
-                    <button type="button" onclick="sendQuery(event)" class="chat-send-btn w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings:'FILL' 1">send</span>
-                    </button>
+            <div id="chat-input-container" class="max-w-3xl w-full mx-auto mt-auto relative z-50 mb-2">
+                <div class="chat-box" id="chat-input-wrapper" style="position:relative; display:flex; flex-direction:column; width:100%; background:#F5E6C8; border-radius:12px; padding:10px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); border:1px solid rgba(120,60,20,0.2); overflow:hidden; transition:all 0.3s ease;">
+                    
+                    <!-- Mouse Glow Effect -->
+                    <div id="chat-glow" style="position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity 0.3s;" class="blur-md"></div>
+                    
+                    <!-- Ripple Container -->
+                    <div id="chat-ripples" style="position:absolute; inset:0; pointer-events:none; border-radius:12px; overflow:hidden;"></div>
+                    
+                    <div style="position:relative; z-index:20; display:flex; align-items:center;">
+                        <textarea id="chat-input" rows="1" placeholder="Ask about competitors, price changes, or trends..." style="width:100%; min-height:24px; max-height:120px; background:transparent; border:none; outline:none; font-family:'Inter',sans-serif; color:#3B1F0E; font-size:14px; resize:none; overflow-y:auto; line-height:24px; margin:0; padding:0;" class="placeholder-[#8B6F47] focus:outline-none focus:ring-0"></textarea>
+                        
+                        <button id="send-btn" type="button" style="margin-left:12px; width:36px; height:36px; border-radius:50%; background:#5A1F1F; flex-shrink:0; cursor:pointer; display:flex; justify-content:center; align-items:center; transition:all 0.2s; border:none; outline:none;" class="focus:outline-none" onmouseover="this.style.background='#722F37'" onmouseout="this.style.background='#5A1F1F'">
+                            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 22L16 10M16 10L11 15M16 10L21 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

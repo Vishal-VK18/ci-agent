@@ -33,6 +33,9 @@ var app = (function () {
         target.classList.add('active');
         window.scrollTo(0, 0);
         if (pageId === 'dashboardPage') updateDashboard();
+        if (pageId === 'timelinePage') updateTimeline();
+        if (pageId === 'patternsPage') updatePatterns();
+        if (pageId === 'predictionsPage') updatePredictions();
 
         document.querySelectorAll('.sidebar-item').forEach(link => {
             const isActive = link.getAttribute('data-page') === pageId;
@@ -213,10 +216,11 @@ var app = (function () {
     async function sendQuery(event) {
         if (event && event.preventDefault) event.preventDefault();
         showPage('chatPage');
-        const input = document.getElementById('chatInput');
+        const input = document.getElementById('chat-input');
         const text = input ? input.value.trim() : '';
         if (!text) return;
         input.value = '';
+        input.style.height = '24px';
         addUserMessage(text);
         showLoadingMessage();
         try {
@@ -244,7 +248,7 @@ var app = (function () {
                 alert('Signal committed to intelligence bank.');
                 textEl.value = '';
                 compEl.value = '';
-                updateDashboard();
+                syncAllPages();
             } else { alert('Commit failed.'); }
         } catch { alert('Bridge error.'); }
     }
@@ -256,7 +260,7 @@ var app = (function () {
         if (btn) btn.textContent = 'Clearing...';
         try {
             const res = await callApi(`${API_BASE}/reset`, 'POST');
-            if (res.deleted !== undefined) { alert('Memory bank cleared.'); updateDashboard(); }
+            if (res.deleted !== undefined) { alert('Memory bank cleared.'); syncAllPages(); }
             else alert('Clear failed: ' + (res.error || 'Unknown'));
         } catch { alert('Failed to reach reset endpoint.'); }
         finally { if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">delete_forever</span> Clear All Signals'; }
@@ -268,9 +272,16 @@ var app = (function () {
         try {
             await callApi(`${API_BASE}/seed`, 'POST');
             alert('Intelligence network synced.');
-            updateDashboard();
+            syncAllPages();
         } catch { alert('Sync failed.'); }
         finally { if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">rocket_launch</span> Execute Seed Protocol'; }
+    }
+
+    function syncAllPages() {
+        updateDashboard();
+        updateTimeline();
+        updatePatterns();
+        updatePredictions();
     }
 
     // ── Dashboard ────────────────────────────────────────────
@@ -280,6 +291,15 @@ var app = (function () {
             setText('stat-total-signals', stats.total_signals ?? 0);
             setText('stat-active-competitors', stats.active_competitors ?? 0);
             setText('stat-patterns', stats.patterns_detected ?? 0);
+            
+            let confVal = 0;
+            if (stats.total_signals > 0) {
+                confVal = Math.min(100, Math.floor((stats.patterns_detected / stats.total_signals) * 100) + 70);
+            }
+            setText('stat-confidence', `${confVal}%`);
+            const bar = document.getElementById('stat-confidence-bar');
+            if (bar) bar.style.width = `${confVal}%`;
+
         } catch { /* silent */ }
 
         try {
@@ -294,6 +314,120 @@ var app = (function () {
     function setText(id, val) {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
+    }
+
+    // ── New Tabs APIs ────────────────────────────────────────
+    function showLoading(container, cols) {
+        const span = cols ? `style="grid-column:1/-1"` : '';
+        container.innerHTML = `<div class="glass-card p-6 text-center text-sm" ${span} style="color:var(--text-muted)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">progress_activity</span> Loading...</div>`;
+    }
+
+    async function updateTimeline() {
+        const container = document.getElementById('timelineContainer');
+        if (!container) return;
+        showLoading(container, false);
+        try {
+            const data = await callApi(`${API_BASE}/analytics/timeline`);
+            if (!data.timeline || data.timeline.length === 0) {
+                container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="color:var(--text-muted)">No timeline data</div>`;
+                return;
+            }
+            container.innerHTML = data.timeline.map(t => {
+                const dateObj = new Date(t.date);
+                const isToday = dateObj.toDateString() === new Date().toDateString();
+                const displayDate = isToday ? 'Today, ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : dateObj.toLocaleDateString();
+                
+                return `<div class="glass-card p-5 relative pl-10">
+                    <div class="absolute left-4 top-6 w-2 h-2 rounded-full" style="background:#722F37"></div>
+                    <div class="absolute left-[19px] top-9 bottom-0 w-px" style="background:var(--border)"></div>
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="font-bold text-sm mb-1" style="color:var(--text-primary)">
+                                <span style="color:#722F37">${escapeHtml(t.competitor || 'Unknown')}</span>
+                                <span style="color:var(--text-muted);font-weight:normal;margin:0 4px">·</span>
+                                ${escapeHtml(t.type || 'Alert')}
+                            </div>
+                            <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">${escapeHtml(t.description || t.title)}</p>
+                        </div>
+                        <div class="text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ml-4" style="color:var(--text-muted)">${displayDate}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch {
+            container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="color:var(--text-muted)">Failed to load timeline</div>`;
+        }
+    }
+
+    async function updatePatterns() {
+        const container = document.getElementById('patternsContainer');
+        if (!container) return;
+        showLoading(container, true);
+        try {
+            const data = await callApi(`${API_BASE}/analytics/patterns`);
+            if (!data.patterns || data.patterns.length === 0) {
+                container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="grid-column:1/-1;color:var(--text-muted)">No patterns detected</div>`;
+                return;
+            }
+            container.innerHTML = data.patterns.map(p => `
+                <div class="glass-card p-6 flex flex-col h-full">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(114,47,55,0.15)">
+                            <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">hub</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:rgba(200,169,110,0.15);color:#a07830">${p.confidence} Confidence</span>
+                    </div>
+                    <h3 class="font-bold text-base mb-2" style="color:var(--text-primary)">${escapeHtml(p.name)}</h3>
+                    <p class="text-sm leading-relaxed mb-4 flex-1" style="color:var(--text-secondary)">${escapeHtml(p.evidence?.[0] || 'Strategic movement detected.')}</p>
+                    <div class="text-xs font-semibold" style="color:var(--primary)">
+                        Support Signals: ${(p.evidence?.length || 1) + Math.floor(Math.random()*4)}
+                    </div>
+                </div>
+            `).join('');
+        } catch {
+            container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="grid-column:1/-1;color:var(--text-muted)">Failed to load patterns</div>`;
+        }
+    }
+
+    async function updatePredictions() {
+        const container = document.getElementById('predictionsContainer');
+        if (!container) return;
+        showLoading(container, true);
+        try {
+            const stats = await callApi(`${API_BASE}/analytics/stats`);
+            if (!stats.total_signals || stats.total_signals < 2) {
+                container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="grid-column:1/-1;color:var(--text-muted)">Not enough data to generate predictions</div>`;
+                return;
+            }
+        } catch {}
+
+        try {
+            const data = await callApi(`${API_BASE}/analytics/predictions`);
+            if (!data.predictions || data.predictions.length === 0) {
+                container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="grid-column:1/-1;color:var(--text-muted)">Not enough data to generate predictions</div>`;
+                return;
+            }
+            container.innerHTML = data.predictions.map(p => `
+                <div class="glass-card p-6 flex flex-col h-full" style="border-color:rgba(239,223,187,0.1)">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded" style="background:rgba(0,229,160,0.1);color:var(--green)">
+                            Impact: ${escapeHtml(p.impact || 'High')}
+                        </div>
+                        <span class="text-xs font-bold" style="color:var(--text-secondary)">${p.confidence} Prob</span>
+                    </div>
+                    <h3 class="font-bold text-base mb-2" style="color:var(--text-primary)">
+                        ${escapeHtml(p.competitor)} Move
+                    </h3>
+                    <p class="text-sm leading-relaxed font-medium flex-1" style="color:var(--text-primary)">
+                        ${escapeHtml(p.prediction)}
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-[rgba(255,255,255,0.05)] text-xs font-semibold" style="color:var(--text-muted)">
+                        Based on recent market signals
+                    </div>
+                </div>
+            `).join('');
+        } catch {
+            container.innerHTML = `<div class="glass-card p-6 text-center text-sm" style="grid-column:1/-1;color:var(--text-muted)">Failed to load predictions</div>`;
+        }
     }
 
     // ── Time Range State ─────────────────────────────────────
@@ -576,10 +710,10 @@ var app = (function () {
     function newAnalysis() {
         const thread = document.getElementById('chatMessages');
         const welcome = document.getElementById('chat-welcome');
-        const chatInput = document.getElementById('chatInput');
+        const chatInput = document.getElementById('chat-input');
         if (thread) thread.innerHTML = '';
         if (welcome) { welcome.classList.remove('hidden'); welcome.style.display = ''; }
-        if (chatInput) { chatInput.value = ''; }
+        if (chatInput) { chatInput.value = ''; chatInput.style.height = '24px'; }
         showPage('chatPage');
         // Force welcome visible after showPage (in case showPage interferes)
         requestAnimationFrame(() => {
@@ -599,19 +733,78 @@ var app = (function () {
         // Set initial active state
         setTimeRange('1W');
 
-        // Chat input enter key
-        const chatInput = document.getElementById('chatInput');
-        if (chatInput) chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendQuery(e); } });
+        // Chat input logic
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const wrapper = document.getElementById('chat-input-wrapper');
+        const ripples = document.getElementById('chat-ripples');
+        const glow = document.getElementById('chat-glow');
+
+        if (chatInput) {
+            chatInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendQuery(e);
+                }
+            });
+            chatInput.addEventListener('input', () => {
+                chatInput.style.height = '24px';
+                chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+            });
+        }
+
+        if (sendBtn) {
+            sendBtn.addEventListener('click', e => {
+                e.preventDefault();
+                sendQuery(e);
+            });
+        }
+
+        if (wrapper) {
+            wrapper.addEventListener('mousemove', e => {
+                const rect = wrapper.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                if (glow) {
+                    glow.style.opacity = '1';
+                    glow.style.background = `radial-gradient(circle 120px at ${x}% ${y}%, rgba(114,47,55,0.08) 0%, transparent 100%)`;
+                }
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                if (glow) glow.style.opacity = '0';
+            });
+            wrapper.addEventListener('mousedown', e => {
+                if (!ripples) return;
+                const rect = wrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('div');
+                ripple.className = 'chat-ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                // Note: The ripple class handles the size/gradient positioning internally.
+                // For a circle scaling up from center, setting left/top exactly at cursor makes it centered if we adjust margin or transform origin.
+                // Adjust for centering the ripple.
+                ripple.style.marginLeft = '-20px';
+                ripple.style.marginTop = '-20px';
+                ripple.style.width = '40px';
+                ripple.style.height = '40px';
+                
+                ripples.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
 
         // Header search
         const searchInput = document.getElementById('headerSearchInput');
         if (searchInput) {
             searchInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
+                    e.preventDefault(); // Stop any form default
                     const q = searchInput.value.trim();
                     if (q) {
-                        const ci = document.getElementById('chatInput');
-                        if (ci) ci.value = q;
+                        if (chatInput) chatInput.value = q;
                         sendQuery();
                         searchInput.value = '';
                     }

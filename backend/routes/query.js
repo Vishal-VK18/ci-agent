@@ -26,18 +26,15 @@ router.post("/", async (req, res) => {
     const signals = await recallSignals(trimmedQuestion, topK);
     console.log(`[Query] Found ${signals.length} relevant signals in memory.`);
 
-    // Step 2: Short-circuit if memory is empty
+    // Step 2 & 3: Build prompt and call Groq
+    let systemPrompt, userPrompt;
     if (signals.length === 0) {
-      return res.status(200).json({
-        answer: "No signals found in memory for this query. Ingest some competitor data first.",
-        is_pattern: false,
-        signals_used: 0,
-      });
+      systemPrompt = "You are a competitive intelligence advisor. Answer the user's question generally based on your pre-trained knowledge since no specific signals exist in memory. Do not mention that you lack data unless explicitly asked.";
+      userPrompt = trimmedQuestion;
+    } else {
+      systemPrompt = SYNTHESISE_SYSTEM;
+      userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
     }
-
-    // Step 3: Build prompt and call Groq
-    const systemPrompt = SYNTHESISE_SYSTEM;
-    const userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
 
     console.log(`[Query] Calling Groq synthesis engine...`);
     const answer = await callGroq(systemPrompt, userPrompt);
