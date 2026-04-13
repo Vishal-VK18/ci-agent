@@ -1,331 +1,345 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Competitive Intelligence Agent - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <title>Competitive Intelligence Agent</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#003fdd",
-                        "primary-container": "#2b59ff",
-                        "on-primary": "#ffffff",
-                        "on-surface": "#181c1f",
-                        "on-surface-variant": "#434656",
-                        "surface": "#f7f9fd",
-                        "surface-container-low": "#f2f4f8",
-                        "surface-container-lowest": "#ffffff",
-                        "outline": "#747688",
-                        "outline-variant": "#c4c5d9"
-                    },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css"/>
 </head>
-<body class="bg-surface text-on-surface overflow-x-hidden min-h-screen">
+<body>
 
     <!-- Sidebar -->
-    <aside class="fixed left-0 top-0 h-full z-40 w-72 flex flex-col bg-[#1E2A44] shadow-xl font-manrope text-sm tracking-wide border-r border-slate-800">
-        <div class="p-8 flex items-center gap-3 pb-4">
-            <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+    <aside class="fixed left-0 top-0 h-full z-40 w-64 flex flex-col" style="background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg sidebar-logo-icon">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">shield_person</span>
             </div>
             <div>
-                <div class="text-white font-bold text-lg leading-tight">CIA</div>
-                <div class="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Intelligence Agent</div>
+                <div class="font-bold text-lg leading-tight" style="color:var(--text-primary)">CIA</div>
+                <div class="text-[10px] uppercase tracking-widest font-bold" style="color:var(--text-muted)">Intelligence Agent</div>
             </div>
         </div>
-        
-        <nav class="flex-1 px-4 space-y-2 mt-4">
-            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3 bg-[#2B59FF] text-white rounded-xl shadow-lg shadow-blue-900/20 active" data-page="dashboardPage" onclick="showPage('dashboardPage')">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span class="font-bold">Dashboard</span>
+
+        <nav class="flex-1 px-3 space-y-1 mt-2">
+            <button class="sidebar-item active w-full flex items-center gap-3 px-4 py-3" data-page="dashboardPage" onclick="showPage('dashboardPage')">
+                <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                <span class="font-semibold text-sm">Dashboard</span>
             </button>
-            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-200 rounded-xl" data-page="chatPage" onclick="showPage('chatPage')">
-                <span class="material-symbols-outlined">forum</span>
-                <span class="font-bold">Intelligence Chat</span>
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3" data-page="chatPage" onclick="showPage('chatPage')">
+                <span class="material-symbols-outlined text-[20px]">forum</span>
+                <span class="font-semibold text-sm">Intelligence Chat</span>
             </button>
-            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-200 rounded-xl" data-page="ingestPage" onclick="showPage('ingestPage')">
-                <span class="material-symbols-outlined">sensors</span>
-                <span class="font-bold">Ingest Signal</span>
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3" data-page="ingestPage" onclick="showPage('ingestPage')">
+                <span class="material-symbols-outlined text-[20px]">sensors</span>
+                <span class="font-semibold text-sm">Ingest Signal</span>
             </button>
         </nav>
-        
-        <div class="p-4 border-t border-slate-700/50 mt-auto">
-            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-200 rounded-xl mb-4" data-page="adminPage" onclick="showPage('adminPage')">
-                <span class="material-symbols-outlined">settings</span>
-                <span class="font-bold">System Admin</span>
+
+        <div class="p-3 mt-auto" style="border-top:1px solid var(--border)">
+            <button class="sidebar-item w-full flex items-center gap-3 px-4 py-3 mb-3" data-page="adminPage" onclick="showPage('adminPage')">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                <span class="font-semibold text-sm">System Admin</span>
             </button>
-            <button class="w-full bg-gradient-to-br from-[#003fdd] to-[#2b59ff] text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined">add</span>
+            <button class="sidebar-new-btn w-full text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">add</span>
                 New Analysis
             </button>
         </div>
     </aside>
 
-    <!-- TopNavBar -->
-    <header class="fixed top-0 right-0 left-72 flex items-center justify-between px-8 h-16 z-30 bg-[#f7f9fd]/80 backdrop-blur-md font-manrope text-base shadow-sm">
-        <div class="flex items-center gap-6 flex-1">
-            <div class="relative group w-full max-w-md">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
-                <input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/20 w-full text-sm transition-all focus:bg-white" placeholder="Search signals..." type="text"/>
-            </div>
+    <!-- Top Bar -->
+    <header class="fixed top-0 right-0 z-30 flex items-center justify-between px-6 h-14" style="left:256px;">
+        <div class="relative w-full max-w-sm">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-muted)">search</span>
+            <input id="headerSearchInput" class="topbar-search w-full pl-9 pr-4 py-2 rounded-xl text-sm" placeholder="Search signals..." type="text"/>
         </div>
-        <div class="flex items-center gap-4">
-            <button class="p-2 hover:bg-[#f2f4f8] rounded-lg transition-all text-on-surface opacity-80 active:opacity-100">
-                <span class="material-symbols-outlined">notifications</span>
+        <div class="flex items-center gap-3 ml-4">
+            <button class="p-2 rounded-lg transition-all" style="color:var(--text-secondary)" onmouseover="this.style.background='var(--surface-card-hover)'" onmouseout="this.style.background='transparent'">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
             </button>
-            <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-on-surface">Alex Mercer</p>
-                    <p class="text-[10px] text-outline font-medium uppercase tracking-widest">Senior Analyst</p>
+            <div style="width:1px;height:28px;background:var(--border)"></div>
+            <div class="flex items-center gap-2">
+                <div class="text-right">
+                    <p class="text-xs font-bold" style="color:var(--text-primary)">Admin Arya</p>
+                    <p class="text-[10px] uppercase tracking-widest" style="color:var(--text-muted)">Senior Analyst</p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                    <span class="material-symbols-outlined text-outline">person</span>
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--surface-card);border:1px solid var(--border)">
+                    <span class="material-symbols-outlined text-[18px]" style="color:var(--text-secondary)">person</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="ml-72 pt-20 px-8 pb-12 min-h-screen">
+    <!-- Main -->
+    <main style="margin-left:256px;padding-top:56px;min-height:100vh;background:var(--surface)">
 
-        <!-- DASHBOARD PAGE -->
-        <div id="dashboardPage" class="page active">
-            <div class="mb-10">
-                <h2 class="text-5xl font-headline font-extrabold text-on-surface tracking-tighter mb-2">Intelligence Overview</h2>
-                <p class="text-on-surface-variant font-body text-lg">Synthesizing global signals and competitive shifts for Q3.</p>
+        <!-- DASHBOARD -->
+        <div id="dashboardPage" class="page active px-6 py-8">
+            <div class="mb-8">
+                <h1 class="font-bold tracking-tight mb-1" style="font-size:2rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">Intelligence Overview</h1>
+                <p class="text-sm" style="color:var(--text-secondary)">Synthesizing global signals and competitive shifts for Q3.</p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-6xl">radar</span>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-2 gap-4 mb-6" style="grid-template-columns:repeat(4,1fr)">
+                <div class="stat-card" style="--card-glow:rgba(43,89,255,0.1)">
+                    <div class="stat-icon" style="background:rgba(43,89,255,0.15)">
+                        <span class="material-symbols-outlined" style="color:var(--primary);font-size:20px">radar</span>
                     </div>
-                    <div class="text-[0.75rem] font-label font-bold text-outline tracking-widest uppercase mb-4">Total Signals</div>
-                    <div class="text-4xl font-headline font-extrabold text-on-surface mb-2" id="stat-total-signals">0</div>
-                    <div class="flex items-center gap-1 text-xs font-bold text-primary">
-                        <span class="material-symbols-outlined text-sm">trending_up</span>
-                        <span>Live stream</span>
-                    </div>
-                </div>
-                
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-6xl">groups</span>
-                    </div>
-                    <div class="text-[0.75rem] font-label font-bold text-outline tracking-widest uppercase mb-4">Active Competitors</div>
-                    <div class="text-4xl font-headline font-extrabold text-on-surface mb-2" id="stat-active-competitors">0</div>
-                    <div class="flex items-center gap-1 text-xs font-bold text-on-surface-variant">
-                        <span class="material-symbols-outlined text-sm">remove</span>
-                        <span>Tracking active</span>
+                    <div class="stat-label">Total Signals</div>
+                    <div class="stat-value" id="stat-total-signals">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(43,89,255,0.12);color:#7b9fff;border:1px solid rgba(43,89,255,0.2)">
+                        <span class="material-symbols-outlined text-[14px]">trending_up</span> Live
                     </div>
                 </div>
-                
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-6xl">verified</span>
+
+                <div class="stat-card" style="--card-glow:rgba(0,229,160,0.08)">
+                    <div class="stat-icon" style="background:rgba(0,229,160,0.12)">
+                        <span class="material-symbols-outlined" style="color:var(--green);font-size:20px">groups</span>
                     </div>
-                    <div class="text-[0.75rem] font-label font-bold text-outline tracking-widest uppercase mb-4">Confidence Score</div>
-                    <div class="text-4xl font-headline font-extrabold text-on-surface mb-2" id="stat-confidence">0%</div>
-                    <div class="w-full bg-surface-container-low h-1 rounded-full mt-4">
-                        <div class="bg-primary h-full rounded-full" style="width: 94%"></div>
+                    <div class="stat-label">Active Competitors</div>
+                    <div class="stat-value" id="stat-active-competitors">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.2)">
+                        <span class="material-symbols-outlined text-[14px]">check_circle</span> Tracking
                     </div>
                 </div>
-                
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-6xl">hub</span>
+
+                <div class="stat-card" style="--card-glow:rgba(255,181,71,0.08)">
+                    <div class="stat-icon" style="background:rgba(255,181,71,0.12)">
+                        <span class="material-symbols-outlined" style="color:var(--amber);font-size:20px">verified</span>
                     </div>
-                    <div class="text-[0.75rem] font-label font-bold text-outline tracking-widest uppercase mb-4">Patterns Detected</div>
-                    <div class="text-4xl font-headline font-extrabold text-on-surface mb-2" id="stat-patterns">0</div>
-                    <div class="flex items-center gap-1 text-xs font-bold text-error">
-                        <span class="material-symbols-outlined text-sm">priority_high</span>
-                        <span>Review needed</span>
+                    <div class="stat-label">Confidence Score</div>
+                    <div class="stat-value" id="stat-confidence">94%</div>
+                    <div style="height:3px;background:var(--border);border-radius:4px;margin-top:12px">
+                        <div style="width:94%;height:100%;background:var(--amber);border-radius:4px"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--card-glow:rgba(255,77,109,0.08)">
+                    <div class="stat-icon" style="background:rgba(255,77,109,0.12)">
+                        <span class="material-symbols-outlined" style="color:var(--red);font-size:20px">hub</span>
+                    </div>
+                    <div class="stat-label">Patterns Detected</div>
+                    <div class="stat-value" id="stat-patterns">0</div>
+                    <div class="stat-badge mt-3" style="background:rgba(255,77,109,0.1);color:var(--red);border:1px solid rgba(255,77,109,0.2)">
+                        <span class="material-symbols-outlined text-[14px]">priority_high</span> Review
                     </div>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-12 gap-6">
-                <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 min-h-[450px] flex flex-col">
-                    <div class="flex items-center justify-between mb-10">
+
+            <!-- Chart + Alert -->
+            <div class="grid gap-4 mb-4" style="grid-template-columns:1fr 320px">
+                <div class="glass-card p-6" style="min-height:360px;display:flex;flex-direction:column">
+                    <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h3 class="text-xl font-headline font-bold text-on-surface">Activity Timeline</h3>
-                            <p class="text-sm text-on-surface-variant">Global signal frequency across 30 days</p>
+                            <h3 class="font-bold text-base" style="color:var(--text-primary)">Activity Timeline</h3>
+                            <p class="text-xs mt-0.5" style="color:var(--text-secondary)">Signal frequency over time</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 bg-surface-container-low text-xs font-bold rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">1D</button>
-                            <button class="px-4 py-2 bg-[#2b59ff] text-xs font-bold rounded-full text-white">1W</button>
-                            <button class="px-4 py-2 bg-surface-container-low text-xs font-bold rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">1M</button>
+                        <div class="flex gap-2" id="timeRangeBtns">
+                            <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1D" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1D</button>
+                            <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold" data-range="1W" style="background:rgba(43,89,255,0.2);border:1px solid rgba(43,89,255,0.4);color:#7b9fff">1W</button>
+                            <button class="time-btn px-3 py-1.5 rounded-full text-xs font-bold transition-all" data-range="1M" style="background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--text-secondary)">1M</button>
                         </div>
                     </div>
-                    <div class="flex-1 w-full bg-surface-container-low/20 rounded-xl flex items-center justify-center border border-dashed border-outline-variant/50">
-                          <p class="text-outline font-medium text-sm">Chart rendering engine loading...</p>
+                    <div class="chart-legend mb-3" id="activityLegend">
+                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#2b59ff"></div>Signals</div>
+                        <div class="chart-legend-item"><div class="chart-legend-line" style="background:#00e5a0"></div>Competitors</div>
+                    </div>
+                    <div class="chart-wrap flex-1 relative" id="activityChartWrap">
+                        <svg id="activityChart" width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#2b59ff" stop-opacity="0.25"/>
+                                    <stop offset="100%" stop-color="#2b59ff" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <g id="chartGridLines"></g>
+                            <path id="chartAreaPath" class="chart-area-path" fill="url(#areaGrad)"/>
+                            <path id="chartLinePath" class="chart-line-path"/>
+                            <path id="chartLinePath2" class="chart-line-path-2"/>
+                            <g id="chartDots"></g>
+                            <g id="chartAxisX"></g>
+                        </svg>
+                        <div class="chart-tooltip" id="chartTooltip">
+                            <div class="tt-label" id="ttLabel"></div>
+                            <span class="tt-val" id="ttVal"></span>
+                            <span class="tt-val2" id="ttVal2"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <div class="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-slate-100 flex-1 flex flex-col items-center justify-center text-center">
-                        <div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center mb-6">
-                            <span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
-                        </div>
-                        <h4 class="text-lg font-headline font-bold text-on-surface mb-2">No alerts detected</h4>
-                        <p class="text-sm text-on-surface-variant max-w-[200px] leading-relaxed">No critical insights in the selected period.</p>
-                        <button class="mt-8 px-6 py-3 text-sm font-bold text-primary hover:bg-surface-container-low rounded-xl transition-all" onclick="updateDashboard()">
-                            Force Refresh
-                        </button>
+
+                <div class="glass-card p-6 flex flex-col">
+                    <h3 class="font-bold text-base mb-1" style="color:var(--text-primary)">Signal Types</h3>
+                    <p class="text-xs mb-4" style="color:var(--text-secondary)">Distribution by category</p>
+                    <div class="flex items-center justify-center flex-1" style="min-height:160px">
+                        <svg id="donutChart" width="140" height="140" viewBox="0 0 140 140">
+                            <g id="donutArcs" transform="translate(70,70)"></g>
+                            <text id="donutCenter" x="70" y="74" text-anchor="middle" font-size="18" font-weight="800" fill="var(--text-primary)" font-family="Plus Jakarta Sans">—</text>
+                        </svg>
                     </div>
+                    <div id="donutLegend" class="space-y-2 mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Competitor Bar Chart + Refresh -->
+            <div class="grid gap-4" style="grid-template-columns:1fr 260px">
+                <div class="glass-card p-6" style="min-height:220px">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-base" style="color:var(--text-primary)">Competitor Activity</h3>
+                            <p class="text-xs mt-0.5" style="color:var(--text-secondary)">Signals per competitor</p>
+                        </div>
+                    </div>
+                    <div id="competitorBars" class="space-y-3"></div>
+                </div>
+
+                <div class="glass-card p-6 flex flex-col items-center justify-center text-center">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style="background:var(--surface-card)">
+                        <span class="material-symbols-outlined text-[28px]" style="color:var(--text-muted)">inventory_2</span>
+                    </div>
+                    <h4 class="font-bold text-sm mb-1" style="color:var(--text-primary)">No alerts detected</h4>
+                    <p class="text-xs leading-relaxed mb-5" style="color:var(--text-secondary)">No critical insights in the selected period.</p>
+                    <button onclick="app.updateDashboard()" class="btn-primary px-5 py-2.5 text-xs rounded-xl">Force Refresh</button>
                 </div>
             </div>
         </div>
 
         <!-- CHAT PAGE -->
-        <div id="chatPage" class="page hidden h-[85vh] flex flex-col relative w-full pt-4">
-            <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div class="absolute -top-[10%] -right-[5%] w-[40%] h-[50%] bg-[#003fdd]/5 blur-[120px] rounded-full"></div>
-            </div>
-            
-            <div class="text-center space-y-6 mb-6 z-10" id="chat-welcome">
-                <div class="w-20 h-20 bg-surface-container-lowest rounded-3xl shadow-lg flex items-center justify-center mx-auto border border-white/50">
-                    <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+        <div id="chatPage" class="page hidden px-6 py-8 flex flex-col" style="height:calc(100vh - 56px)">
+            <div class="text-center mb-6" id="chat-welcome">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 sidebar-logo-icon">
+                    <span class="material-symbols-outlined text-white text-[32px]" style="font-variation-settings:'FILL' 1">smart_toy</span>
                 </div>
-                <div>
-                    <h2 class="font-headline text-4xl font-extrabold text-on-surface leading-tight">
-                        READY FOR <span class="text-primary-container">INTERROGATION.</span>
-                    </h2>
-                    <p class="font-body text-outline text-base max-w-lg mx-auto mt-2">
-                        I am your competitive intelligence synthetic agent. Ask anything.
-                    </p>
-                </div>
+                <h2 class="font-extrabold text-2xl tracking-tight mb-1" style="color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">
+                    READY FOR <span style="color:var(--primary)">INTERROGATION.</span>
+                </h2>
+                <p class="text-sm" style="color:var(--text-secondary)">Ask anything about competitors, pricing, or market trends.</p>
             </div>
 
-            <div id="chatMessages" class="flex-1 overflow-y-auto mt-4 mb-4 pr-4 space-y-4 w-full max-w-4xl mx-auto z-10 scroll-smooth">
-                <!-- Chat messages injected here -->
-            </div>
+            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto"></div>
 
-            <div class="w-full max-w-4xl mx-auto mt-auto mb-4 z-20">
-                <div class="bg-surface-container-lowest rounded-[2rem] shadow-xl p-2 pl-6 flex items-center gap-4 border border-slate-200">
-                    <span class="material-symbols-outlined text-outline">psychology</span>
-                    <input id="chatInput" autocomplete="off" class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline/60 py-4 font-body text-base" placeholder="Ask about competitors, price changes, or trends..." type="text"/>
-                    <button type="button" onclick="sendQuery(event)" class="bg-gradient-to-br from-[#003fdd] to-[#2b59ff] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all shrink-0 mr-1">
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+            <div class="max-w-3xl w-full mx-auto mt-auto">
+                <div class="chat-input-wrap flex items-center gap-3 p-2 pl-5">
+                    <span class="material-symbols-outlined text-[20px]" style="color:var(--text-muted)">psychology</span>
+                    <input id="chatInput" class="chat-input flex-1 py-3 text-sm" placeholder="Ask about competitors, price changes, or trends..." type="text" autocomplete="off"/>
+                    <button type="button" onclick="sendQuery(event)" class="chat-send-btn w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings:'FILL' 1">send</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- INGEST PAGE -->
-        <div id="ingestPage" class="page hidden w-full max-w-4xl mx-auto py-8">
-            <div class="mb-10">
-                <h1 class="text-5xl font-extrabold text-on-surface mb-4 tracking-tight">Ingest intelligence</h1>
-                <p class="text-on-surface-variant text-lg font-body leading-relaxed max-w-2xl">
-                    Add raw text to the agent's memory bank. Our neural parser will categorize and index findings.
-                </p>
+        <div id="ingestPage" class="page hidden px-6 py-8 max-w-3xl mx-auto">
+            <div class="mb-8">
+                <h1 class="font-extrabold tracking-tight mb-2" style="font-size:1.75rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">Ingest Intelligence</h1>
+                <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">Add raw text to the agent's memory bank. Our neural parser will categorize and index findings.</p>
             </div>
-            
-            <div class="bg-surface-container-lowest rounded-[24px] shadow-lg border border-slate-100 p-8 md:p-12">
-                <div class="space-y-8">
-                    <!-- Target Entity -->
-                    <div class="space-y-3">
-                        <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.1em] block ml-1">Target Entity / Competitor Name</label>
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50">corporate_fare</span>
-                            <input id="ingestCompetitor" class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface font-medium placeholder:text-outline/40 focus:bg-white focus:ring-[3px] focus:ring-primary/20 transition-all" placeholder="e.g. Acme Corp" type="text"/>
-                        </div>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div class="space-y-3">
-                        <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.1em] block ml-1">Intelligence Source / Raw Content</label>
-                        <textarea id="ingestText" class="w-full bg-surface-container-low border-none rounded-2xl p-6 text-on-surface font-medium placeholder:text-outline/40 focus:bg-white focus:ring-[3px] focus:ring-primary/20 transition-all resize-none" placeholder="Paste briefing contents or field observations here..." rows="8"></textarea>
-                    </div>
 
-                    <div class="pt-8 flex items-center justify-between border-t border-surface-container">
-                        <div class="flex items-center gap-3 text-on-surface-variant hidden md:flex">
-                            <span class="material-symbols-outlined text-primary">auto_awesome</span>
-                            <span class="text-xs font-semibold">AI classification enabled</span>
-                        </div>
-                        <button onclick="ingestSignal()" class="bg-[#1E2A44] hover:bg-slate-900 text-white px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 shadow-lg hover:shadow-xl active:scale-95 transition-all ml-auto">
-                            <span>Commit to Memory</span>
-                            <span class="material-symbols-outlined">database</span>
-                        </button>
+            <div class="glass-card p-8 space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold uppercase tracking-widest block" style="color:var(--text-muted)">Target Entity / Competitor Name</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px]" style="color:var(--text-muted)">corporate_fare</span>
+                        <input id="ingestCompetitor" class="ingest-input w-full py-3 pl-11 pr-4 text-sm rounded-xl" placeholder="e.g. Acme Corp" type="text"/>
                     </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold uppercase tracking-widest block" style="color:var(--text-muted)">Intelligence Source / Raw Content</label>
+                    <textarea id="ingestText" class="ingest-textarea w-full p-4 text-sm rounded-xl resize-none" placeholder="Paste briefing contents or field observations here..." rows="8"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-4" style="border-top:1px solid var(--border)">
+                    <div class="flex items-center gap-2" style="color:var(--text-secondary)">
+                        <span class="material-symbols-outlined text-[18px]" style="color:var(--primary)">auto_awesome</span>
+                        <span class="text-xs font-semibold">AI classification enabled</span>
+                    </div>
+                    <button onclick="ingestSignal()" class="btn-primary px-6 py-3 text-sm rounded-xl flex items-center gap-2">
+                        <span>Commit to Memory</span>
+                        <span class="material-symbols-outlined text-[18px]">database</span>
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- ADMIN PAGE -->
-        <div id="adminPage" class="page hidden w-full max-w-5xl mx-auto py-8">
-            <div class="mb-12">
-                <h1 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">System Admin</h1>
-                <p class="text-lg text-outline font-medium">Operational control of the intelligence pipeline.</p>
+        <div id="adminPage" class="page hidden px-6 py-8 max-w-4xl mx-auto">
+            <div class="mb-8">
+                <h1 class="font-extrabold tracking-tight mb-1" style="font-size:1.75rem;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif">System Admin</h1>
+                <p class="text-sm" style="color:var(--text-secondary)">Operational control of the intelligence pipeline.</p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Seed Data Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-8 shadow-lg border border-slate-100 flex flex-col justify-between">
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <!-- Seed -->
+                <div class="admin-card flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">database</span>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(43,89,255,0.15)">
+                                <span class="material-symbols-outlined text-[24px]" style="color:var(--primary);font-variation-settings:'FILL' 1">database</span>
                             </div>
-                            <span class="px-3 py-1 bg-surface-container-low text-outline text-[10px] font-bold uppercase tracking-widest rounded-full">Foundation</span>
+                            <span class="badge badge-blue">Foundation</span>
                         </div>
-                        <h2 class="text-2xl font-bold text-on-surface mb-4">Initial Knowledge Load</h2>
-                        <p class="text-on-surface-variant leading-relaxed mb-8">
-                            Seeds the Hindsight Memory bank with baseline intelligence required for real-time signal processing.
-                        </p>
+                        <h2 class="font-bold text-lg mb-2" style="color:var(--text-primary)">Initial Knowledge Load</h2>
+                        <p class="text-sm leading-relaxed mb-6" style="color:var(--text-secondary)">Seeds the memory bank with baseline intelligence required for real-time signal processing.</p>
                     </div>
-                    <button id="seedBtn" onclick="seedData()" class="w-full py-4 bg-gradient-to-br from-[#003fdd] to-[#2b59ff] text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-3 active:scale-95">
-                        <span class="material-symbols-outlined">rocket_launch</span>
+                    <button id="seedBtn" onclick="seedData()" class="btn-primary w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
                         Execute Seed Protocol
                     </button>
                 </div>
 
-                <!-- Node Health -->
-                <div class="bg-surface-container-lowest rounded-xl p-8 shadow-lg border border-slate-100">
-                    <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-2xl font-bold text-on-surface">Node Health</h2>
-                        <div class="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
-                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span class="text-[10px] font-bold text-green-700 uppercase tracking-tighter">System Nominal</span>
+                <!-- Clear -->
+                <div class="admin-card flex flex-col justify-between" style="border-color:rgba(255,77,109,0.2)">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(255,77,109,0.12)">
+                                <span class="material-symbols-outlined text-[24px]" style="color:var(--red);font-variation-settings:'FILL' 1">delete_sweep</span>
+                            </div>
+                            <span class="badge badge-red">Destructive</span>
                         </div>
+                        <h2 class="font-bold text-lg mb-2" style="color:var(--text-primary)">Clear Memory Bank</h2>
+                        <p class="text-sm leading-relaxed mb-6" style="color:var(--text-secondary)">Wipes all stored signals from the memory bank and resets it to a clean state.</p>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
-                            <div class="flex items-center gap-4">
-                                <span class="material-symbols-outlined text-outline">memory</span>
-                                <div>
-                                    <div class="font-bold text-on-surface text-sm">GROQ LPU</div>
-                                    <div class="text-[10px] text-outline uppercase font-semibold">Inference Engine</div>
-                                </div>
-                            </div>
-                            <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    <button id="clearMemoryBtn" onclick="clearMemory()" class="btn-danger w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                        Clear All Signals
+                    </button>
+                </div>
+            </div>
+
+            <!-- Node Health -->
+            <div class="admin-card">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-bold text-lg" style="color:var(--text-primary)">Node Health</h2>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full" style="background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2)">
+                        <div class="status-dot-green"></div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider" style="color:var(--green)">System Nominal</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="signal-item">
+                        <div class="competitor-avatar" style="background:rgba(43,89,255,0.15)">
+                            <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">memory</span>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
-                            <div class="flex items-center gap-4">
-                                <span class="material-symbols-outlined text-outline">storage</span>
-                                <div>
-                                    <div class="font-bold text-on-surface text-sm">HINDSIGHT MEMORY</div>
-                                    <div class="text-[10px] text-outline uppercase font-semibold">Vector Database</div>
-                                </div>
-                            </div>
-                            <span class="material-symbols-outlined text-green-500">check_circle</span>
+                        <div class="flex-1">
+                            <div class="font-bold text-sm" style="color:var(--text-primary)">GROQ LPU</div>
+                            <div class="text-[10px] uppercase font-semibold" style="color:var(--text-muted)">Inference Engine</div>
                         </div>
+                        <span class="material-symbols-outlined text-[20px]" style="color:var(--green)">check_circle</span>
+                    </div>
+                    <div class="signal-item">
+                        <div class="competitor-avatar" style="background:rgba(43,89,255,0.15)">
+                            <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">storage</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-sm" style="color:var(--text-primary)">HINDSIGHT MEMORY</div>
+                            <div class="text-[10px] uppercase font-semibold" style="color:var(--text-muted)">Vector Database</div>
+                        </div>
+                        <span class="material-symbols-outlined text-[20px]" style="color:var(--green)">check_circle</span>
                     </div>
                 </div>
             </div>
@@ -333,7 +347,6 @@
 
     </main>
 
-    <!-- App Logic -->
     <script src="app.js"></script>
 </body>
 </html>

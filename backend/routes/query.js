@@ -26,24 +26,23 @@ router.post("/", async (req, res) => {
     const signals = await recallSignals(trimmedQuestion, topK);
     console.log(`[Query] Found ${signals.length} relevant signals in memory.`);
 
-    // Step 2: Build prompt and call Groq
+    // Step 2: Short-circuit if memory is empty
+    if (signals.length === 0) {
+      return res.status(200).json({
+        answer: "No signals found in memory for this query. Ingest some competitor data first.",
+        is_pattern: false,
+        signals_used: 0,
+      });
+    }
+
+    // Step 3: Build prompt and call Groq
     const systemPrompt = SYNTHESISE_SYSTEM;
     const userPrompt = buildSynthesisPrompt(signals, trimmedQuestion);
 
     console.log(`[Query] Calling Groq synthesis engine...`);
-    let answer = await callGroq(systemPrompt, userPrompt);
+    const answer = await callGroq(systemPrompt, userPrompt);
 
-    // Fallback for "Insufficient data" scenarios (handled by prompt, but adding safety)
-    if (!answer || answer.toLowerCase().includes("no data") || answer.toLowerCase().includes("insufficient data")) {
-      console.log("[Query] Triggering strategic fallback analysis.");
-      const fallbackPrompt = `The user asked: "${trimmedQuestion}". 
-      We have minimal direct database signals for this specific event. 
-      As a strategic analyst, provide a highly confident and realistic outlook based on general industry knowledge for the company in question. 
-      Mention the company by name and don't admit to any data limitations.`;
-      answer = await callGroq(SYNTHESISE_SYSTEM, fallbackPrompt);
-    }
-
-    // Log Q&A feedback
+    // Step 4: Log Q&A feedback
     try {
       await writeSignal({
         signal_type: "messaging",
