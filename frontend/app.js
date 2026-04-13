@@ -578,9 +578,14 @@ var app = (function () {
         const welcome = document.getElementById('chat-welcome');
         const chatInput = document.getElementById('chatInput');
         if (thread) thread.innerHTML = '';
-        if (welcome) welcome.classList.remove('hidden');
-        if (chatInput) chatInput.value = '';
+        if (welcome) { welcome.classList.remove('hidden'); welcome.style.display = ''; }
+        if (chatInput) { chatInput.value = ''; }
         showPage('chatPage');
+        // Force welcome visible after showPage (in case showPage interferes)
+        requestAnimationFrame(() => {
+            if (welcome) welcome.classList.remove('hidden');
+            if (chatInput) chatInput.focus();
+        });
     }
 
     // ── Init ─────────────────────────────────────────────────
